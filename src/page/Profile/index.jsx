@@ -22,7 +22,7 @@ function Profile() {
                          Trang tài khoản
                     </p>
                </div>
-               <div className="flex ">
+               <div className="grid-cols-2 gap-y-0 lg:flex ">
                     {/* slider bar */}
                     <div className=" basis-[100%] lg:basis-[30%] border-x-gray-50 border-x-2  mt-5">
                          <div className="mt-3 ml-2 font-Montserrat ">
@@ -32,7 +32,7 @@ function Profile() {
                                         <FaRegUser className=" text-4xl lg:text-5xl font-semibold w-full text-gray-500"/>
                                    </div>
                                    <div className=" font-semibold  text-base lg:text-xl">
-                                        Nguyễn Đức Duy
+                                        {UserInfor.fullName}
                                    </div>
                               </div>
                               {/* nội dung */}
@@ -57,7 +57,7 @@ function Profile() {
                          </div>
                     </div>
                     {/* content */}
-                    <div className=" hidden lg:block lg:basis-[70%] border-r-2 border-r-gray-100">
+                    <div className=" block lg:basis-[70%] border-r-2 border-r-gray-100">
                          {
                               <Content/>
                          }

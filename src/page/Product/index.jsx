@@ -3,10 +3,10 @@ import Features from "./Features";
 import ImageProduct from "./ImageProduct";
 import More from "./More";
 function Product() {
-    const {id}=useParams()
+    //const {id}=useParams()
     return ( 
     <div>
-        <p>{id}</p>
+        {/* <p>{id}</p> */}
         <ImageProduct/>
         <Features/>
         <More/>

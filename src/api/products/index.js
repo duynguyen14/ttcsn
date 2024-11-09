@@ -55,4 +55,6 @@ const Mouse=[
     {id:"44",name: "Surface Pro 11_Snapdragon X Plus 16GB 256GB",sale:"32%", ram:"RAM: 16G",ssd:"SSD: 256G",newprice:"23 790 000đ", oldprice: "33 000 000",image: Ultrabook_1},
     {id:"45",name: "Surface Pro 11_Snapdragon X Plus 16GB 256GB",sale:"32%", ram:"RAM: 16G",ssd:"SSD: 256G",newprice:"23 790 000đ", oldprice: "33 000 000",image: Ultrabook_1},
 ]
+
+
 export {Laptop_Product, Keyboard_Product,Mouse}

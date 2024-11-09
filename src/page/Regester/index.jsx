@@ -1,9 +1,8 @@
 import {useState} from 'react'
 import {Link, useNavigate} from 'react-router-dom';
-import { useSelector, useDispatch } from 'react-redux';
 import { FaUser } from "react-icons/fa";
 import { FaEye } from "react-icons/fa";
-import { LoginUser } from '../../redux/Actions';
+import request from '../../utils/request';
 import ListUsers from '../../api/users'
 function Regester() {
     const [showpassword,setShowPassword]=useState(false);
@@ -90,7 +89,7 @@ function Regester() {
         checkInput(name,value);
     }
     
-    const handleOnsumbit=(e)=>{
+    const handleOnsumbit= async (e)=>{
         e.preventDefault();
         const validatename=checkInput('name',user.name)
         const validateemail=checkInput('email',user.email)
@@ -98,32 +97,40 @@ function Regester() {
         const validateconfirmpassword=checkInput('confirmpassword',user.confirmpassword)
         if(validatename && validateemail && validatepassdword && validateconfirmpassword){
             const newuser={
-                id:`${ListUsers.length+1}`,
-                name: user.name,
+                fullName: user.name,
                 email: user.email,
-                password:user.password
+                password:user.password,
+                userType: "Bạc",
+                loyaltyPoints:0,
             }
-            ListUsers.push(newuser)
+            try{
+                await request.post("user",newuser)
+            }
+            catch(error){
+                console.log("Lỗi",error);
+            }
             alert("Đăng ký tài khoản thành công");
             navigate("/login");
         }
     }
     return ( 
         // login page
-        <div className=" flex justify-center items-center h-screen font-Montserrat">
+        <div className="flex justify-center items-center font-Montserrat h-[95vh]">
             <form action="" className='w-full flex justify-center items-center'
             onSubmit={handleOnsumbit}
             >
                 <div className="font-Montserrat w-[100%] md:w-[50%] xl:w-[30%] border-[0.5px] border-gray-200 rounded-md flex flex-col gap-y-1 items-center bg-white mx-2 shadow-sm shadow-green-100">
-                    <p className="font-bold text-primary  text-sm lg:text-3xl uppercase text-center mt-3">
-                        phdtech
-                    </p>
+                    <Link to={'/'}>
+                        <p className="font-bold text-primary  text-sm lg:text-3xl uppercase text-center mt-2">
+                            phdtech
+                        </p>
+                    </Link>
                     <p className='font-bold text-2xl'>
                         Đăng ký
                     </p>
-                    <div className="flex flex-col items-center py-2 w-full text-sm lg:text-base group relative">
-                        <label htmlFor="name" className='text-left w-full px-6 font-semibold py-2'><p>Tên đăng nhập</p></label>
-                        <input placeholder="Tên đăng nhập" id='name'
+                    <div className="flex flex-col items-center py-1 w-full text-sm lg:text-base group relative">
+                        <label htmlFor="name" className='text-left w-full px-6 font-semibold py-2'><p>Tên người dùng</p></label>
+                        <input placeholder="Tên người dùng" id='name'
                         type="text"
                         className="input-form"
                         value={user.name} name='name'
@@ -133,7 +140,7 @@ function Regester() {
                         <FaUser className='absolute right-8 top-[65px] lg:right-10 font-bold lg:text-xl group-focus:text-primary cursor-pointer'/>
                         {nameerror&& <p className='text-xs w-full px-6 text-left font-bold text-red-500 absolute bottom-[-10px]'>{nameerror}</p>}
                     </div>
-                    <div className="flex flex-col py-2 w-full relative group items-center">
+                    <div className="flex flex-col py-1 w-full relative group items-center">
                     <label htmlFor="email" className='text-left w-full px-6 font-semibold py-2'>Email</label>
                     <input type="text" placeholder="Địa chỉ gmail" id='email'
                         className="input-form"
@@ -143,7 +150,7 @@ function Regester() {
                     <FaUser className='absolute right-8 top-[65px] lg:right-10 font-bold lg:text-xl group-focus:text-primary '/>
                     {emailerror&& <p className='text-xs w-full px-6 text-left font-bold text-red-500 absolute bottom-[-10px]'>{emailerror}</p>}
                     </div>
-                    <div className="flex flex-col items-center py-2 w-full text-sm lg:text-base group relative">
+                    <div className="flex flex-col items-center py-1 w-full text-sm lg:text-base group relative">
                         <label htmlFor="password" className='text-left w-full px-6 font-semibold py-2'><p>Mật khẩu</p></label>
                         <input placeholder="Mật khẩu" id='password'
                         type={showpassword? "text": "password"}
@@ -155,7 +162,7 @@ function Regester() {
                         {passworderror&& <p className='text-xs w-full px-6 text-left font-bold text-red-500 absolute bottom-[-10px]'>{passworderror}</p>}
 
                     </div>
-                    <div className="flex flex-col items-center py-2 w-full text-sm lg:text-base group relative">
+                    <div className="flex flex-col items-center py-1 w-full text-sm lg:text-base group relative">
                         <label htmlFor="confirmpassword" className='text-left w-full px-6 font-semibold py-2'><p>Xác nhận mật khẩu</p></label>
                         <input placeholder="Nhập lại mật khẩu" id='confirmpassword'
                         type={showconfirnpassword? "text": "password"}
@@ -169,7 +176,7 @@ function Regester() {
                     <button className=" my-5 px-3 py-2 lg:px-5 lg:py-3 w-[90%] bg-primary hover:bg-primary/70 transition-all duration-500 ease-in-out rounded-md text-white font-semibold">Đăng ký</button>
                     <div className='font-bold text-xs lg:text-base mb-2 text-black py-2'>
                         <p>
-                            Bạn đã có tài khoản? 
+                            Bạn đã có tài khoản? &ensp;
                             <Link 
                             to={"/login"}
                             className='text-primary hover:text-red-500'>Đăng nhập</Link>

@@ -10,9 +10,9 @@ function MyAccount() {
     }
     let Content= ContentArr[content].component; 
     return ( 
-        <div className="ml-4 mt-3 font-Montserrat">
+        <div className="lg:ml-4 mt-3 font-Montserrat">
             {/* tiêu đề */}
-           <div className="px-20 border-b-2 border-b-gray-100 flex flex-col gap-y-5 py-2">
+           <div className="lg:px-20 border-b-2 border-b-gray-100 flex flex-col gap-y-5 py-2">
             <p className="font-bold text-3xl">
                 Hồ sơ của tôi
             </p>

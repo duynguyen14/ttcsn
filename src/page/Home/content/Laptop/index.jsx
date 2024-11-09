@@ -1,10 +1,12 @@
 
-import { useState } from 'react';
+import { useEffect, useState} from 'react';
 import { Link } from 'react-router-dom';
 import { Laptop_Product } from '../../../../api/products';
+import request from '../../../../utils/request';
 function Laptop() {
     const [ismore,setIsmore]=useState(true);
     const [numberproduct,setNumberproduct]=useState(5);
+    const [good,setGood]=useState([]);
     const productSlice=Laptop_Product.slice(0,numberproduct);
     const handleclickIsmore=()=>{
         setNumberproduct(numberproduct+5);
@@ -12,6 +14,12 @@ function Laptop() {
             setIsmore(false)
         }
     }
+    useEffect(()=>{
+        request.get("Good").then(
+            res=>setGood(res.data)
+        )
+    },[])
+    console.log("dữ liệu :",good);
     return ( 
         <div className="mx-3 my-3 lg:mx-16 xl:mx-32 relative border-solid">
             

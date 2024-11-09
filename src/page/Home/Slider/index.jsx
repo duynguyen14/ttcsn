@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import Image1 from '../../../assets/images/Image1.png';
+import Image1 from '../../../assets/images/Titel_1.jpg';
 import Image2 from '../../../assets/images/Image2.jpg';
 import Image3 from '../../../assets/images/Image3.jpg';
 import Image4 from '../../../assets/images/Image4.png';

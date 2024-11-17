@@ -1,32 +1,20 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
 import { useDispatch } from "react-redux";
 import { FaUser } from "react-icons/fa";
 import { FaEye } from "react-icons/fa";
 import { LoginUser } from "../../redux/Actions";
-import request from "../../utils/request";
+import {request1} from "../../utils/request";
 function Login() {
   const dispatch = useDispatch();
   const [showpassword, setShowPassword] = useState(false);
   const [showmesage, setShowmessage] = useState(false);
   const [message, setMessage] = useState("");
-  const [listUsers,setlistUser]=useState([]);
+  const navigate = useNavigate();
   const [user, setUser] = useState({
-    fullName:"",
     email: "",
     password: "",
-    userType:"",
-    phone: "",
-    loyaltyPoints: 0
   });
-  useEffect(()=>{
-    request.get('user').then(
-      (res)=>{
-        setlistUser(res.data)
-      }
-    )
-    },[])
   const handleOnchange = (e) => {
     const { name, value } = e.target;
     setUser({
@@ -35,32 +23,35 @@ function Login() {
     });
     setShowmessage(false);
   };
-  const navigate = useNavigate();
-  let fouderUser = null;
-  const handleOnsumbit = (e) => {
+  const handleOnsumbit = async(e) => {
     e.preventDefault();
     if (user.password === "" || user.email === "") {
       setMessage("Điền đầy đủ thông tin đăng nhập!");
       setShowmessage(true);
       return;
     }
-    for (let i = 0; i < listUsers.length; i++) {
-      if (
-        listUsers[i].email === user.email &&
-        listUsers[i].password === user.password
-      ) {
-        fouderUser = listUsers[i];
+    try{
+      const response= await request1.post("user/login",{
+        email:user.email,
+        password:user.password
+      })
+      if(response.status===200){
+        alert("Đăng nhập thành công")
+        localStorage.setItem("access_token", response.data.access_token);
+        localStorage.setItem("refresh_token", response.data.refresh_token);
+        localStorage.setItem("user", JSON.stringify(response.data.user));
+        dispatch(LoginUser(response.data.user))
+        navigate("/");
       }
     }
-    if (fouderUser) {
-      dispatch(LoginUser(fouderUser));
-      setShowmessage(false);
-      alert("Đăng nhập thành công!");
-      navigate("/");
-    } else {
-      setMessage("Mật khẩu hoặc địa chỉ gmail không đúng");
-      setShowmessage(true);
-      return;
+    catch(e){
+      if(e.status===400){
+        setMessage("Thông tin đăng nhập không đúng");
+        setShowmessage(true);
+      }
+      else{
+        alert("Có lỗi sảy ra Không kết nối được với server");
+      }
     }
   };
   return (

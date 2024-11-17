@@ -2,7 +2,7 @@ import {useState} from 'react'
 import {Link, useNavigate} from 'react-router-dom';
 import { FaUser } from "react-icons/fa";
 import { FaEye } from "react-icons/fa";
-import request from '../../utils/request';
+import {request, request1} from '../../utils/request';
 import ListUsers from '../../api/users'
 function Regester() {
     const [showpassword,setShowPassword]=useState(false);
@@ -104,13 +104,13 @@ function Regester() {
                 loyaltyPoints:0,
             }
             try{
-                await request.post("user",newuser)
+                await request1.post("user/register",newuser)
+                alert("Đăng ký tài khoản thành công");
+                navigate("/login");
             }
             catch(error){
                 console.log("Lỗi",error);
             }
-            alert("Đăng ký tài khoản thành công");
-            navigate("/login");
         }
     }
     return ( 

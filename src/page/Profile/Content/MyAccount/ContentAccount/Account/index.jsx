@@ -2,54 +2,82 @@ import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { UpdateUser } from "../../../../../../redux/Actions";
-import request from "../../../../../../utils/request";
+import { request1 } from "../../../../../../utils/request";
 function Account() {
   const User = useSelector((state) => state.user.user);
-  const Status=useSelector((state)=>state.user.status);
-  const dispatch=useDispatch();
-  const [user,setUser]=useState({
+  console.log("user", User);
+  const Status = useSelector((state) => state.user.status);
+  const dispatch = useDispatch();
+  const [user, setUser] = useState({
     ...User,
-    newpassword:"",
-    confirmnewpassword:"",
-
-  })
-  const handleOnchange=(e)=>{
+    newpassword: "",
+    confirmnewpassword: "",
+  });
+  const handleOnchange = (e) => {
     //e.preventDefault();
-    const {name, value}=e.target;
-    setUser(
-        {
-            ...user,
-            [name]: value
-        }
-    )
-  }
-  const handleOnSumbit=async(e)=>{
-    e.preventDefault()
-    const updateUser={
+    const { name, value } = e.target;
+    setUser({
+      ...user,
+      [name]: value,
+    });
+  };
+  const handleOnSumbit = async (e) => {
+    e.preventDefault();
+    if(user.newpassword!==user.confirmnewpassword){
+      alert("Xác nhận mật khẩu cần trùng với mật khẩu");
+      return;
+    }
+    const updateUser = {
+      id:user.id,
       fullName: user.fullName,
       email: user.email,
       password: user.newpassword || user.password,
-      userType:user.userType,
-      loyaltyPoints:user.loyaltyPoints
+      userType: user.userType,
+      loyaltyPoints: user.loyaltyPoints,
+    };
+    try {
+      const respone=await request1.patch(`user/${User.id}/update/`, updateUser);
+      if(respone.status===200){
+        alert("Chỉnh sửa thông tin thành công");
+        localStorage.setItem("user",JSON.stringify(updateUser));
+        setUser(pre=>({...pre,password:pre.newpassword||pre.password,newpassword:"",confirmnewpassword:""}))
+      }
+      console.log("respone",respone.data);
+      dispatch(
+        UpdateUser({
+          fullName: user.fullName,
+          email: user.email,
+          password: user.newpassword || user.password,
+        })
+      );
     }
-    await request.put(`/user/${User.id}`, updateUser);
-    alert("Chỉnh sửa thông tin thành công");
-    dispatch(UpdateUser({
-        fullName: user.fullName,
-        email: user.email,
-        password: user.newpassword|| user.password
-    }))
-  }
+    catch (error) {
+      console.error("Error during the API request:", error);
+      if (error.response) {
+        console.error("Server responded with status:", error.response.status);
+        console.error("Response data:", error.response.data);
+      } else {
+        console.error("Error details:", error.message);
+      }
+    }
+  };
   return (
     <div>
       {Status === false ? (
         <div className="text-center text-xl font-Montserrat font-semibold">
-            <p>
-                Bạn chưa đăng nhập <span className="text-primary"><Link to={'/login'}>Đăng nhập ngay</Link></span>
-            </p>
+          <p>
+            Bạn chưa đăng nhập{" "}
+            <span className="text-primary">
+              <Link to={"/login"}>Đăng nhập ngay</Link>
+            </span>
+          </p>
         </div>
       ) : (
-        <form action="" className="flex flex-col gap-y-5" onSubmit={(e)=>handleOnSumbit(e)}>
+        <form
+          action=""
+          className="flex flex-col gap-y-5"
+          onSubmit={(e) => handleOnSumbit(e)}
+        >
           {/* tên đăng nhập */}
           <div className="flex flex-col font-bold text-base gap-y-2">
             <label htmlFor="fullName">
@@ -61,7 +89,7 @@ function Account() {
               className="border-2 w-[50%] h-12 border-gray-500  focus:outline-primary px-2"
               name="fullName"
               value={user.fullName}
-              onChange={(e)=>handleOnchange(e)}
+              onChange={(e) => handleOnchange(e)}
             />
           </div>
           {/* địa chỉ email */}
@@ -75,7 +103,7 @@ function Account() {
               className="border-2 w-[80%] h-12 border-gray-500  focus:outline-primary px-2"
               name="email"
               value={user.email}
-              onChange={(e)=>handleOnchange(e)}
+              onChange={(e) => handleOnchange(e)}
             />
           </div>
           {/* Mật khẩu */}
@@ -89,7 +117,7 @@ function Account() {
               className="border-2 w-[80%] h-12 border-gray-500  focus:outline-primary px-2"
               name="password"
               value={user.password}
-              onChange={(e)=>handleOnchange(e)}
+              onChange={(e) => handleOnchange(e)}
             />
           </div>
           {/* Mật khẩu mới */}
@@ -103,7 +131,7 @@ function Account() {
               className="border-2 w-[80%] h-12 border-gray-500  focus:outline-primary px-2"
               name="newpassword"
               value={user.newpassword}
-              onChange={(e)=>handleOnchange(e)}
+              onChange={(e) => handleOnchange(e)}
             />
           </div>
           {/* Xác nhận mật khẩu mới */}
@@ -117,13 +145,12 @@ function Account() {
               className="border-2 w-[80%] h-12 border-gray-500  focus:outline-primary px-2"
               name="confirmnewpassword"
               value={user.confirmnewpassword}
-              onChange={(e)=>handleOnchange(e)}
+              onChange={(e) => handleOnchange(e)}
             />
           </div>
           {/* Lưu thông tin */}
           <div className="items-center w-full">
-            <button className="px-3 py-3 text-white bg-primary hover:bg-primary/65 font-bold  rounded-md transition-all duration-500 ease-in-out"
-            >
+            <button className="px-3 py-3 text-white bg-primary hover:bg-primary/65 font-bold  rounded-md transition-all duration-500 ease-in-out">
               Lưu thông tin
             </button>
           </div>
@@ -132,5 +159,4 @@ function Account() {
     </div>
   );
 }
-
 export default Account;

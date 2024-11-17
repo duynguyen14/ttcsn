@@ -7,6 +7,7 @@ function Profile() {
      "Tài khoản của tôi", "Đơn hàng","Khuyến mãi của tôi", "Đăng xuất"
      ]
      const UserInfor=useSelector(state=>state.user.user)
+     console.log(UserInfor);
      const handOnclick=(index)=>{
           setContent(index)
      }
@@ -32,7 +33,7 @@ function Profile() {
                                         <FaRegUser className=" text-4xl lg:text-5xl font-semibold w-full text-gray-500"/>
                                    </div>
                                    <div className=" font-semibold  text-base lg:text-xl">
-                                        {UserInfor.fullName}
+                                        {UserInfor&&UserInfor.fullName}
                                    </div>
                               </div>
                               {/* nội dung */}

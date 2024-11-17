@@ -1,9 +1,7 @@
 import { Types } from "../Types";
 
 const initalState = {
-  user: {
-
-  },
+  user: JSON.parse(localStorage.getItem("user")) || null,
   status: false,
 };
 const UserReducer = (state = initalState, action) => {

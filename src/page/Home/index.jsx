@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import Content from "./content";
 import Slider from "./Slider";
-import request from "../../utils/request";
+import {request} from "../../utils/request";
 import axios from "axios";
 function Home() {
     // //const [Products,setProducts]=useState([]);

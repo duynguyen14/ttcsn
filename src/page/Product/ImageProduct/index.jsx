@@ -5,12 +5,15 @@ import { PricetoString } from "../../../Component/Translate_Price";
 import {request, request1} from "../../../utils/request";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 function ImageProduct({ id }) {
   const [Product, setProduct] = useState({})
   const statusUser = useSelector((state) => state.user.status);
   const navigate = useNavigate();
   const token= localStorage.getItem("access_token");
-  console.log(token);
+  // const csrfToken=localStorage.getItem("CSRF_token");
+  const [csrfToken,setCsrfToken]=useState('');
+  console.log(csrfToken)
   const sales = [
     "Giảm đến 10% phụ kiện & đồ công nghệ khác khi mua kèm máy.",
     "Giảm đến 3 triệu với Thu cũ đổi mới lên đời laptop",
@@ -20,6 +23,7 @@ function ImageProduct({ id }) {
     "Trả góp: 0% trả trước, 0% lãi suất",
     "Liên hệ B2B để được tư vấn giá tốt nhất cho khách hàng doanh nghiệp",
   ];
+  
   useEffect(()=>{
     const fetch= async()=>{
       try{
@@ -33,6 +37,37 @@ function ImageProduct({ id }) {
     }
     fetch();
   },[])
+  // function getCookie(name) {
+  //   const value = `; ${document.cookie}`;
+  //   const parts = value.split(`; ${name}=`);
+  //   if (parts.length === 2) return parts.pop().split(';').shift();
+  //   return null; // Nếu cookie không tồn tại
+  // }
+  
+  // Lấy CSRF token từ cookie
+  // const csrfToken = getCookie('csrftoken');
+  useEffect(() => {
+    const fetchCSRF = async () => {
+      // Kiểm tra nếu token đã có trong localStorage
+      // const storedCSRFToken = localStorage.getItem("CSRF_token");
+      // if (storedCSRFToken) {
+      //   console.log("Token đã có trong localStorage:", storedCSRFToken);
+      //   return; // Nếu có, không cần gọi API nữa
+      // }
+      try {
+        const response = await request1.get("user/get_csrf/");
+        setCsrfToken(response.data.csrfToken);
+        console.log("CSRF Token từ API:", response.data.csrfToken);
+  
+        // Lưu token vào localStorage
+        localStorage.setItem("CSRF_token", response.data.csrfToken);
+      } catch (error) {
+        console.log("Lỗi khi lấy CSRF token:", error);
+      }
+    };
+  
+    fetchCSRF();
+  }, []);
   const [number, setNumber] = useState(1);
   const handleClickplus = () => {
     if (number >= 5) {
@@ -68,7 +103,9 @@ function ImageProduct({ id }) {
         },
         {
           headers: {
-            Authorization: `Bearer ${token}`, // Include the token in the headers
+            Authorization: `Bearer ${token}`, // Thêm token vào header để xác thực
+            "Content-Type": "application/json",
+            "X-CSRFToken": csrfToken,
           },
         }
       )
@@ -81,6 +118,7 @@ function ImageProduct({ id }) {
       // navigate("/cartshopping")
     }
   };
+  // console.log("product ",Product);
   return (
     <div className="test my-5 font-Montserrat">
       <div className="my-5">

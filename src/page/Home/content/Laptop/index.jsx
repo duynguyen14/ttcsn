@@ -20,7 +20,7 @@ function Ultrabook() {
     };
     fetch();
   }, []);
-  useEffect(() => {
+  useEffect(() => { 
     if (good && good.length > 0) {
       setProductsilce(good.slice(0, numberproduct));
     }
@@ -31,6 +31,7 @@ function Ultrabook() {
       setIsmore(false);
     }
   };
+  // console.log("good ",good);
   return (
     <div className="mx-3 my-3 lg:mx-16 xl:mx-32 relative border-solid">
       <h1 className="uppercase font-bold font-Montserrat text-md lg:text-xl cursor-pointer hover:text-primary">
@@ -49,7 +50,8 @@ function Ultrabook() {
                   <div className="max-w- overflow-hidden">
                     <img
                       src={Product.image}
-                      alt=""
+                      // src={`http://127.0.0.1:8888/${Product.image}`}
+                      // alt=""
                       className="max-w-full hover:scale-110 transition-all ease-in-out duration-500 block"
                     />
                   </div>

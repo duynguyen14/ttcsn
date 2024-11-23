@@ -11,7 +11,7 @@ function Order({}) {
   console.log("sản phẩm: ", SelectedItems);
   const total=()=>{
     let total=0;
-    if(SelectedItems.length>0){
+    if(SelectedItems&&SelectedItems.length>0){
         SelectedItems.forEach(item=>{
             total+=item.number*item.newprice;
         })
@@ -69,7 +69,7 @@ function Order({}) {
             })}
           </div>
         </div>
-        {SelectedItems.map((item, index) => {
+        {SelectedItems&&SelectedItems.map((item, index) => {
           return (
             <div key={index} className="flex items-center py-5 border-[1px] border-gray-100">
                 {/* ảnh sản phẩm */}

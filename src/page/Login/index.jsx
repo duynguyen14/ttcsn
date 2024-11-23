@@ -5,7 +5,9 @@ import { FaUser } from "react-icons/fa";
 import { FaEye } from "react-icons/fa";
 import { LoginUser } from "../../redux/Actions";
 import {request1} from "../../utils/request";
+import axios from "axios";
 function Login() {
+  axios.defaults.withCredentials = true;
   const dispatch = useDispatch();
   const [showpassword, setShowPassword] = useState(false);
   const [showmesage, setShowmessage] = useState(false);
@@ -23,6 +25,28 @@ function Login() {
     });
     setShowmessage(false);
   };
+  // useEffect(() => {
+  //   const fetchCSRF = async () => {
+  //     // Kiểm tra nếu token đã có trong localStorage
+  //     const storedCSRFToken = localStorage.getItem("CSRF_token");
+  //     if (storedCSRFToken) {
+  //       console.log("Token đã có trong localStorage:", storedCSRFToken);
+  //       return; // Nếu có, không cần gọi API nữa
+  //     }
+  
+  //     try {
+  //       const response = await request1.get("user/get_csrf/");
+  //       console.log("CSRF Token từ API:", response.data.csrfToken);
+  
+  //       // Lưu token vào localStorage
+  //       localStorage.setItem("CSRF_token", response.data.csrfToken);
+  //     } catch (error) {
+  //       console.log("Lỗi khi lấy CSRF token:", error);
+  //     }
+  //   };
+  
+  //   fetchCSRF();
+  // }, []);
   const handleOnsumbit = async(e) => {
     e.preventDefault();
     if (user.password === "" || user.email === "") {
@@ -31,13 +55,14 @@ function Login() {
       return;
     }
     try{
-      const response= await request1.post("user/login",{
+      const response= await request1.post("user/login/",{
         email:user.email,
         password:user.password
       })
       if(response.status===200){
         alert("Đăng nhập thành công")
         localStorage.setItem("access_token", response.data.access_token);
+        console.log(typeof(localStorage.getItem("access_token")));
         localStorage.setItem("refresh_token", response.data.refresh_token);
         localStorage.setItem("user", JSON.stringify(response.data.user));
         dispatch(LoginUser(response.data.user))

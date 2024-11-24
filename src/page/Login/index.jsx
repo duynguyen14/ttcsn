@@ -6,6 +6,7 @@ import { FaEye } from "react-icons/fa";
 import { LoginUser } from "../../redux/Actions";
 import {request1} from "../../utils/request";
 import axios from "axios";
+import Cookies from "js-cookie";
 function Login() {
   axios.defaults.withCredentials = true;
   const dispatch = useDispatch();
@@ -47,38 +48,40 @@ function Login() {
   
   //   fetchCSRF();
   // }, []);
-  const handleOnsumbit = async(e) => {
+  const handleOnsumbit = async (e) => {
     e.preventDefault();
     if (user.password === "" || user.email === "") {
       setMessage("Điền đầy đủ thông tin đăng nhập!");
       setShowmessage(true);
       return;
     }
-    try{
-      const response= await request1.post("user/login/",{
-        email:user.email,
-        password:user.password
-      })
-      if(response.status===200){
-        alert("Đăng nhập thành công")
-        localStorage.setItem("access_token", response.data.access_token);
-        console.log(typeof(localStorage.getItem("access_token")));
-        localStorage.setItem("refresh_token", response.data.refresh_token);
-        localStorage.setItem("user", JSON.stringify(response.data.user));
-        dispatch(LoginUser(response.data.user))
-        navigate("/");
+    try {
+      const response = await request1.post("user/login/", {
+        email: user.email,
+        password: user.password,
+      });
+  
+      if (response.status === 200) {
+        alert("Đăng nhập thành công");
+  
+        // Lưu thông tin vào cookie
+        Cookies.set("access_token", response.data.access_token, { expires: 7, path: "" });
+        Cookies.set("refresh_token", response.data.refresh_token, { expires: 7, path: "" });
+        Cookies.set("user", JSON.stringify(response.data.user), { expires: 7, path: "" });
+  
+        dispatch(LoginUser(response.data.user));
+        navigate("/"); // Chuyển hướng sau khi đăng nhập thành công
       }
-    }
-    catch(e){
-      if(e.status===400){
+    } catch (e) {
+      if (e.response?.status === 400) {
         setMessage("Thông tin đăng nhập không đúng");
         setShowmessage(true);
-      }
-      else{
+      } else {
         alert("Có lỗi sảy ra Không kết nối được với server");
       }
     }
   };
+  
   return (
     // login page
     <div className="flex items-center h-[95vh] font-Montserrat overflow-hidden box-border">

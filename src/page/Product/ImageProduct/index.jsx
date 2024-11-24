@@ -71,23 +71,7 @@ function ImageProduct({ id }) {
   
   //   fetchCSRF();
   // }, []);
-  useEffect(() => {
-    const fetchCSRF = async () => {
-      try {
-        const response = await request1.get("user/get_csrf/");
-        setCsrfToken(response.data.csrfToken);
-        console.log("CSRF Token từ API:", response.data.csrfToken);
-  
-        // Lưu token vào cookie với thuộc tính HttpOnly và SameSite
-        document.cookie = `csrftoken=${response.data.csrfToken}; path=/; secure; SameSite=Strict`;
-      } catch (error) {
-        console.log("Lỗi khi lấy CSRF token:", error);
-      }
-    };
-  
-    fetchCSRF();
-  }, []);
-  
+
   const [number, setNumber] = useState(1);
   const handleClickplus = () => {
     if (number >= 5) {
@@ -118,15 +102,13 @@ function ImageProduct({ id }) {
     if (!window.confirm("Bạn xác nhận thêm sản phẩm này vào giỏ")) return;
     else {
       try {
-        const csrfToken = getCSRFTokenFromCookie("csrftoken"); // Lấy CSRF token từ cookie
-        const response = await axios.post("http://127.0.0.1:8888/api/cart/add/", {
+        const response= await request1.post("cart/add/", {
           good_id: id,
           quantity: number,
         }, {
           headers: {
             Authorization: `Bearer ${access_token}`,  // Đảm bảo token đúng
             "Content-Type": "application/json",
-            "X-CSRFToken": csrfToken, // Đảm bảo CSRF token đúng
           },
           withCredentials: true,  // Cho phép gửi cookie
         });

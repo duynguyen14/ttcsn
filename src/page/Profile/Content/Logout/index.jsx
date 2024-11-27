@@ -8,9 +8,9 @@ function Logout() {
   useEffect(() => {
     dispatch(LogoutUser());
     localStorage.removeItem("user");
-    localStorage.removeItem("access_token");
-    localStorage.removeItem("refresh_token");
-    localStorage.removeItem("CSRF_token");
+    // localStorage.removeItem("access_token");
+    // localStorage.removeItem("refresh_token");
+    // localStorage.removeItem("CSRF_token");
     // deleteCookie('csrftoken');
     navigate("/");
   }, []);

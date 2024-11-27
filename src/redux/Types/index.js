@@ -13,6 +13,7 @@ const Types={
         AddProduct:"addProduct",
         DeleteProduct:"DeleteProduct",
         UpdateProduct:"UpdateProduct",
+        GetCart:"GetCart",
         
     }
 }

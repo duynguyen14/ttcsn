@@ -1,9 +1,13 @@
 import { Types } from "../Types";
 
-const initalState=[];
+const initalState={
+    cart:[]
+};
 
 const CartShoppingReducer=(state=initalState, action)=>{
     switch(action.type){
+        case Types.ShoppingCart.GetCart:
+            return { ...state, cart: [...cart,action.payload] };
         case Types.ShoppingCart.AddProduct:
             return [
                 ...state, action.payload

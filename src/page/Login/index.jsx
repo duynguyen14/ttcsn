@@ -26,28 +26,6 @@ function Login() {
     });
     setShowmessage(false);
   };
-  // useEffect(() => {
-  //   const fetchCSRF = async () => {
-  //     // Kiểm tra nếu token đã có trong localStorage
-  //     const storedCSRFToken = localStorage.getItem("CSRF_token");
-  //     if (storedCSRFToken) {
-  //       console.log("Token đã có trong localStorage:", storedCSRFToken);
-  //       return; // Nếu có, không cần gọi API nữa
-  //     }
-  
-  //     try {
-  //       const response = await request1.get("user/get_csrf/");
-  //       console.log("CSRF Token từ API:", response.data.csrfToken);
-  
-  //       // Lưu token vào localStorage
-  //       localStorage.setItem("CSRF_token", response.data.csrfToken);
-  //     } catch (error) {
-  //       console.log("Lỗi khi lấy CSRF token:", error);
-  //     }
-  //   };
-  
-  //   fetchCSRF();
-  // }, []);
   const handleOnsumbit = async (e) => {
     e.preventDefault();
     if (user.password === "" || user.email === "") {
@@ -68,9 +46,9 @@ function Login() {
         Cookies.set("access_token", response.data.access_token, { expires: 7, path: "" });
         Cookies.set("refresh_token", response.data.refresh_token, { expires: 7, path: "" });
         Cookies.set("user", JSON.stringify(response.data.user), { expires: 7, path: "" });
-  
+        localStorage.setItem('user',JSON.stringify(response.data.user));
         dispatch(LoginUser(response.data.user));
-        navigate("/"); // Chuyển hướng sau khi đăng nhập thành công
+        navigate("/");
       }
     } catch (e) {
       if (e.response?.status === 400) {

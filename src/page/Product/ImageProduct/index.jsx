@@ -2,21 +2,14 @@ import { useEffect, useState } from "react";
 import { HiPlusSm } from "react-icons/hi";
 import { RiSubtractFill } from "react-icons/ri";
 import { PricetoString } from "../../../Component/Translate_Price";
-import {request, request1} from "../../../utils/request";
+import { request1 } from "../../../utils/request";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 function ImageProduct({ id }) {
-  const [Product, setProduct] = useState({})
+  const [Product, setProduct] = useState({});
   const statusUser = useSelector((state) => state.user.status);
   const navigate = useNavigate();
   const access_token = getCSRFTokenFromCookie("access_token"); // Sử dụng hàm getCSRFTokenFromCookie
-
-
-  // alert(token)
-  // const csrfToken=localStorage.getItem("CSRF_token");
-  const [csrfToken,setCsrfToken]=useState('');
-  console.log(csrfToken)
   const sales = [
     "Giảm đến 10% phụ kiện & đồ công nghệ khác khi mua kèm máy.",
     "Giảm đến 3 triệu với Thu cũ đổi mới lên đời laptop",
@@ -26,52 +19,19 @@ function ImageProduct({ id }) {
     "Trả góp: 0% trả trước, 0% lãi suất",
     "Liên hệ B2B để được tư vấn giá tốt nhất cho khách hàng doanh nghiệp",
   ];
-  
-  useEffect(()=>{
-    const fetch= async()=>{
-      try{
-        const response= await request1.get(`goods/list/${id}/`)
+
+  useEffect(() => {
+    const fetch = async () => {
+      try {
+        const response = await request1.get(`goods/list/${id}/`);
         // console.log(response)
         setProduct(response.data);
+      } catch (e) {
+        console.log("lỗi", e);
       }
-      catch(e){
-        console.log("lỗi",e)
-      }
-    }
+    };
     fetch();
-  },[])
-  // function getCookie(name) {
-  //   const value = `; ${document.cookie}`;
-  //   const parts = value.split(`; ${name}=`);
-  //   if (parts.length === 2) return parts.pop().split(';').shift();
-  //   return null; // Nếu cookie không tồn tại
-  // }
-  
-  // Lấy CSRF token từ cookie
-  // const csrfToken = getCookie('csrftoken');
-  // useEffect(() => {
-  //   const fetchCSRF = async () => {
-  //     // Kiểm tra nếu token đã có trong localStorage
-  //     // const storedCSRFToken = localStorage.getItem("CSRF_token");
-  //     // if (storedCSRFToken) {
-  //     //   console.log("Token đã có trong localStorage:", storedCSRFToken);
-  //     //   return; // Nếu có, không cần gọi API nữa
-  //     // }
-  //     try {
-  //       const response = await request1.get("user/get_csrf/");
-  //       setCsrfToken(response.data.csrfToken);
-  //       console.log("CSRF Token từ API:", response.data.csrfToken);
-  
-  //       // Lưu token vào localStorage
-  //       localStorage.setItem("CSRF_token", response.data.csrfToken);
-  //     } catch (error) {
-  //       console.log("Lỗi khi lấy CSRF token:", error);
-  //     }
-  //   };
-  
-  //   fetchCSRF();
-  // }, []);
-
+  }, []);
   const [number, setNumber] = useState(1);
   const handleClickplus = () => {
     if (number >= 5) {
@@ -98,30 +58,35 @@ function ImageProduct({ id }) {
       alert("Vui lòng chọn số lượng sản phẩm");
       return;
     }
-  
+
     if (!window.confirm("Bạn xác nhận thêm sản phẩm này vào giỏ")) return;
     else {
       try {
-        const response= await request1.post("cart/add/", {
-          good_id: id,
-          quantity: number,
-        }, {
-          headers: {
-            Authorization: `Bearer ${access_token}`,  // Đảm bảo token đúng
-            "Content-Type": "application/json",
+        const response = await request1.post(
+          "cart/add/",
+          {
+            good_id: id,
+            quantity: number,
           },
-          withCredentials: true,  // Cho phép gửi cookie
-        });
-        
+          {
+            headers: {
+              Authorization: `Bearer ${access_token}`, // Đảm bảo token đúng
+              "Content-Type": "application/json",
+            },
+            withCredentials: true, // Cho phép gửi cookie
+          }
+        );
+
         console.log(response);
         alert("Thêm sản phẩm vào giỏ hàng thành công");
+        navigate("/cartshopping");
       } catch (e) {
         console.log("lỗi", e);
       }
     }
   };
-  
-  // console.log("product ",Product);
+
+  console.log("product ",Product);
   return (
     <div className="test my-5 font-Montserrat">
       <div className="my-5">
@@ -141,27 +106,29 @@ function ImageProduct({ id }) {
           </p>
         </div>
         <div className="border-2 border-solid border-gray-50 rounded-md h-auto px-2 flex flex-col gap-y-3">
-          <div className="flex gap-7 px-6 font-bold items-center"> 
+          <div className="flex gap-7 px-6 font-bold items-center">
             <p className="text-red-500 text-base lg:text-xl">
-            {Product.price && PricetoString(Product.price.split("."))} 
-              đ
+              {Product.price && PricetoString(Product.price.split(".")[0])}đ
             </p>
           </div>
           <div className="">
             <p className="font-bold text-base">Màu sắc: {Product.color}</p>
-            <div className="font-bold text-sm lg:text-base ">
-              <p className="flex gap-x-10 items-center">
-                Số lượng:
-                <RiSubtractFill
-                  className=" text-xl cursor-pointer mx-2"
-                  onClick={handleClicksubtraction}
-                />
-                {number}
-                <HiPlusSm
-                  className="text-xl cursor-pointer mx-2"
-                  onClick={handleClickplus}
-                />
-              </p>
+            <div className="font-bold text-sm lg:text-base flex-col justify-around">
+              <div className="my-5">
+                <p className="flex gap-x-10 items-center">
+                  Số lượng:
+                  <RiSubtractFill
+                    className=" text-xl cursor-pointer mx-2"
+                    onClick={handleClicksubtraction}
+                  />
+                  {number}
+                  <HiPlusSm
+                    className="text-xl cursor-pointer mx-2"
+                    onClick={handleClickplus}
+                  />
+                </p>
+              </div>
+            <p className="text-gray-400 font-semibold my-5">Sản phẩm sẵn có :&ensp;{Product.amount}</p>
             </div>
           </div>
 
@@ -182,7 +149,8 @@ function ImageProduct({ id }) {
             >
               Thêm vào giỏ hàng
             </button>
-            <button className="py-4 px-3 lg:px-6 lg:py-6 bg-yellow-400 text-blue-900 rounded-md hover:bg-primary transition-all duration-500">
+            <button className="py-4 px-3 lg:px-6 lg:py-6 bg-yellow-400 text-blue-900 rounded-md hover:bg-primary transition-all duration-500"
+            onClick={()=>handleOnclickAddspc()}>
               Mua ngay
             </button>
           </div>
@@ -206,17 +174,11 @@ function ImageProduct({ id }) {
 }
 export default ImageProduct;
 
-
-
-
-
 function getCSRFTokenFromCookie(name) {
   const value = `; ${document.cookie}`;
   const parts = value.split(`; ${name}=`);
-  if (parts.length === 2) return parts.pop().split(';').shift();
+  if (parts.length === 2) return parts.pop().split(";").shift();
   return null; // Nếu không tìm thấy
 }
-
-
 
 // const csrfToken = getCSRFTokenFromCookie();

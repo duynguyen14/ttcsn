@@ -8,6 +8,7 @@ import Regester from "./Regester"
 import Profile from "./Profile"
 import SaleProducts from "./SaleProducts"
 import Order from "./Oder"
+import BuildDetail from "./BuildDetail"
 const PublicPage=[
     {path:"/", component: Home, layout: Defaultlayout},
     {path:"/product/:id", component: Products, layout: Defaultlayout},
@@ -16,6 +17,7 @@ const PublicPage=[
     {path:"/profile", component: Profile, layout: Defaultlayout},
     {path:"/saleproduct", component: SaleProducts, layout: Defaultlayout},
     {path:"/order", component: Order, layout: Defaultlayout},
+    {path:"/buildDetail/:id", component: BuildDetail, layout: Defaultlayout},
     {path:"/login", component: Login, layout: null},
     {path:"/regester", component: Regester, layout: null},
     

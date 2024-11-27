@@ -26,7 +26,7 @@ function MyAccount() {
                 {
                     title1s.map((title1,index)=>{
                         return(
-                           <li key={index} className="px-5 py-2 bg-gray-300 rounded-md cursor-pointer font-bold text-base hover:text-white hover:bg-primary transition-all duration-500 ease-in-out"
+                           <li key={index} className="px-1 md:px-5 py-2 bg-gray-300 rounded-md cursor-pointer font-bold  text-sm whitespace-nowrap md:text-base hover:text-white hover:bg-primary transition-all duration-500 ease-in-out"
                            onClick={()=>handleOnclick(index)}
                            style={content===index?{
                             background : "rgb(0, 173, 162)",

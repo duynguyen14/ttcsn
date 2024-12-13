@@ -7,7 +7,7 @@ function Profile() {
      "Tài khoản của tôi", "Đơn hàng","Khuyến mãi của tôi", "Đăng xuất"
      ]
      const UserInfor=useSelector(state=>state.user.user)
-     console.log(UserInfor);
+     // console.log(UserInfor);
      const handOnclick=(index)=>{
           setContent(index)
      }

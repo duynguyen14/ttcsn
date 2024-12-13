@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { UpdateUser } from "../../../../../../redux/Actions";
@@ -21,7 +21,7 @@ function Account() {
       ...user,
       [name]: value,
     });
-  };
+  }
   const handleOnSumbit = async (e) => {
     e.preventDefault();
     if(user.newpassword!==user.confirmnewpassword){

@@ -4,7 +4,7 @@ import { getCSRFTokenFromCookie } from "../../Component/Token/getCSRFToken";
 //user
 const access_token=getCSRFTokenFromCookie("access_token");
 const LoginUser=(data)=>{
-    console.log("data "+data);
+    // console.log("data "+data);
     return{
         type: Types.User.Login,
         payload: data,

@@ -12,9 +12,9 @@ import "tippy.js/dist/tippy.css";
 import Search from "./Search";
 function Navbar() {
   const titles_1 = [
-    { title: "Máy tính", link: "/" },
-    { title: "Chuột", link: "/" },
-    { title: "Bàn Phím", link: "/" },
+    { title: "Máy tính", link: "/laptop" },
+    { title: "Chuột", link: "/mouse" },
+    { title: "Bàn Phím", link: "/keyboard" },
     { title: "Sale hot", link: "/" },
     { title: "Chơi game nhận thưởng hot", link: "/game" },
     { title: "Về chúng tôi", link: "/about" },

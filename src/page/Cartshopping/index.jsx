@@ -6,7 +6,7 @@ import { request1 } from "../../utils/request";
 import { PricetoString } from "../../Component/Translate_Price";
 import { getCSRFTokenFromCookie } from "../../Component/Token/getCSRFToken";
 import { useSelector } from "react-redux";
-import { Vouchers } from "../../api/vouchers";
+
 import { FiShoppingCart } from "react-icons/fi";
 function Cartshopping() {
   const [selectedItems, setSlectedItem] = useState([]);
@@ -18,6 +18,11 @@ function Cartshopping() {
   const access_token = getCSRFTokenFromCookie("access_token");
   const [isAllSelected, setIsAllSelected] = useState(false); // Thêm trạng thái này
   const user = useSelector((state) => state.user.user);
+  const [vouchers , setVouchers] = useState([]);
+
+  const [selectedVoucher, setSelectedVoucher] = useState(null);
+  const [totalAmount, setTotalAmount] = useState(0);  // Tổng tiền đã giảm giá
+
   // console.log("người dùng",user)
   useEffect(() => {
     const fetchData = async () => {
@@ -82,11 +87,10 @@ function Cartshopping() {
       selectedItems.forEach((i) => {
         tong += i.quantity * i.good.price;
       });
-    } else {
-      tong = 0;
     }
     return tong;
   };
+  
   useEffect(() => {
     if (cartgoods.length > 0 && selectedId.length === cartgoods.length) {
       setIsAllSelected(true); // Nếu tất cả sản phẩm đều được chọn
@@ -187,26 +191,41 @@ function Cartshopping() {
       alert("Bạn chưa chọn sản phẩm nào");
       return;
     } else {
-      navigate("/order", { state: selectedItems });
+      navigate("/order", { state: selectedItems, totalAmount });
     }
   };
   const handleOnclinkShowVoucher = async () => {
     // call API
-    // try{
-    //   const response = await request1.get("vouchers/redeemed_vouchers/", {
-    //     headers: {
-    //       Authorization: `Bearer ${access_token}`,
-    //       "Content-Type": "application/json",
-    //     },
-    //     withCredentials: true,
-    //   });
-    //   console.log(response)
-    // }
-    // catch(e){
-    //   console.log("Lỗi ",e)
-    // }
+    try{
+      const response = await request1.get("vouchers/redeemed_vouchers/", {
+        headers: {
+          Authorization: `Bearer ${access_token}`,
+          "Content-Type": "application/json",
+        },
+        withCredentials: true,
+      });
+      // Chỉ lấy danh sách các voucher từ dữ liệu trả về
+      const vouchers = response.data.map((item) => item.voucher);
+
+      console.log(vouchers); // Debug xem kết quả
+      setVouchers(vouchers); // Cập nhật state với danh sách voucher
+    }
+    catch(e){
+      console.log("Lỗi ",e)
+    }
     setShowvoucher(true);
   };
+
+  const handleSelectVoucher = (voucher) => {
+    setSelectedVoucher(voucher);
+    // Tính lại tổng tiền sau khi áp dụng voucher
+    let discount = (voucher.discount_percentage / 100) * total();
+    setTotalAmount(total() - discount);
+    setShowvoucher(false);  // Ẩn modal
+  };
+  
+
+
   return user == null ? (
     <div>
       <div className="text-center text-xl font-Montserrat font-semibold my-10">
@@ -256,50 +275,55 @@ function Cartshopping() {
             >
               <div className="w-[800px] h-[700px] bg-white rounded-xl">
                 <div>
-                  <div>
-                    <p className="pt-5 text-center font-semibold text-xl">
-                      Voucher của bạn
-                    </p>
-                  </div>
-                  {Vouchers.map((item, index) => {
-                    return (
-                      <li
-                        key={item.id}
-                        className="list-none px-2 py-3 my-5 border-[1.5px] border-gray-200 "
-                      >
-                        <div className="grid grid-cols-3 w-full items-center gap-x-5 lg:gap-x-20 md:mx-5">
-                          <div className="w-[100px] h-[100px] lg:w-[150px] lg:h-[150px] bg-primary/60 items-center justify-center block basis-[30%]">
-                            <div className="text-center flex justify-center items-center h-[60%]">
-                              <FiShoppingCart className="text-3xl lg:text-6xl text-gray-100 w-full" />
-                            </div>
-                            <p className="text-xs lg:text-sm font-semibold text-gray-100 text-center whitespace-break-spaces">
-                              {item.voucherName}
-                            </p>
+                  <p className="pt-5 text-center font-semibold text-xl">Voucher của bạn</p>
+                  {vouchers.map((item) => (
+                    <li
+                      key={item.id}
+                      className="list-none px-2 py-3 my-5 border-[1.5px] border-gray-200 cursor-pointer hover:bg-gray-100 transition-all duration-300"
+                      onClick={() => handleSelectVoucher(item)} // Chọn voucher
+                    >
+                      <div className="grid grid-cols-3 w-full items-center gap-x-5 lg:gap-x-20 md:mx-5">
+                        <div className="w-[100px] h-[100px] lg:w-[150px] lg:h-[150px] bg-primary/60 items-center justify-center block basis-[30%]">
+                          <div className="text-center flex justify-center items-center h-[60%]">
+                            <FiShoppingCart className="text-3xl lg:text-6xl text-gray-100 w-full" />
                           </div>
-                          <p className="text-xs lg:text-base font-semibold text-center">
-                            Giảm {item.promotionalPercentage}% toàn ngành hàng
+                          <p className="text-xs lg:text-sm font-semibold text-gray-100 text-center whitespace-break-spaces">
+                            {item.title}
                           </p>
-                          <p className="text-2xl ml-16">
-                            X 1
-                          </p>
-                          <div className="ml-4 md:ml-10">
-                          </div>
                         </div>
-                      </li>
-                    );
-                  })}
+                        <p className="text-xs lg:text-base font-semibold text-center">
+                          Giảm {item.discount_percentage}% toàn ngành hàng
+                        </p>
+                        <p className="text-2xl ml-16">X 1</p>
+                      </div>
+                    </li>
+                  ))}
                 </div>
                 <div className="flex justify-end mx-5">
-                  <button onClick={() => setShowvoucher(false)} className="button-primary px-5 py-2 bg-primary ">
-                    Hoàn thành
+                  <button
+                    onClick={() => setShowvoucher(false)} // Đóng modal khi nhấn Quay lại
+                    className="button-primary px-5 py-2 bg-primary"
+                  >
+                    Quay lại
                   </button>
                 </div>
               </div>
             </div>
+
             {/* Tổng tiền */}
-            <div className="md:basis-25% block md:flex md:mx-10 md:gap-x-5 items-center">
-              <p className="text-red-500">Tổng tiền:</p>
-              <p>{PricetoString(total())}</p>
+            <div className="flex justify-between mt-5">
+              {selectedVoucher && (
+                <div className="font-semibold mr-[10vw]">
+                  {/* <p>Voucher đã chọn: {selectedVoucher.title}</p> */}
+                  <p>Voucher đã chọn:       </p>
+                  <p className="text-sm text-gray-500">
+                    Giảm {selectedVoucher.discount_percentage}%
+                  </p>
+                </div>
+              )}
+              <div className="text-xl font-semibold">
+                Tổng tiền: {PricetoString(totalAmount || total())}
+              </div>
             </div>
             <div className="button-primary px-2 py-1 lg:px-3 lg:py-2 bg-red-500">
               <button onClick={() => handleOnclickOrder()}>Mua hàng</button>

@@ -5,6 +5,7 @@ import { PricetoString } from "../../../Component/Translate_Price";
 import { request1 } from "../../../utils/request";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { getCSRFTokenFromCookie } from "../../../Component/Token/getCSRFToken";
 function ImageProduct({ id }) {
   const [Product, setProduct] = useState({});
   const statusUser = useSelector((state) => state.user.status);
@@ -174,11 +175,11 @@ function ImageProduct({ id }) {
 }
 export default ImageProduct;
 
-function getCSRFTokenFromCookie(name) {
-  const value = `; ${document.cookie}`;
-  const parts = value.split(`; ${name}=`);
-  if (parts.length === 2) return parts.pop().split(";").shift();
-  return null; // Nếu không tìm thấy
-}
+// function getCSRFTokenFromCookie(name) {
+//   const value = `; ${document.cookie}`;
+//   const parts = value.split(`; ${name}=`);
+//   if (parts.length === 2) return parts.pop().split(";").shift();
+//   return null; // Nếu không tìm thấy
+// }
 
 // const csrfToken = getCSRFTokenFromCookie();

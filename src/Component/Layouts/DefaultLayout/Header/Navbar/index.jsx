@@ -16,9 +16,10 @@ function Navbar() {
     { title: "Chuột", link: "/mouse" },
     { title: "Bàn Phím", link: "/keyboard" },
     { title: "Sale hot", link: "/" },
-    { title: "Chơi game nhận thưởng hot", link: "/game" },
+    { title: "Chơi game nhận thưởng hot", link: "https://trihung.itch.io/game-discount" }, 
     { title: "Về chúng tôi", link: "/about" },
   ];
+  
   const titles_2 = [
     { title: "Giỏ hàng", link: "/cartshopping" },
     { title: "Tài khoản của tôi", link: "/" },

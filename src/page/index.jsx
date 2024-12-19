@@ -21,6 +21,7 @@ import Logitech from "./Mouse/Logitech"
 import Rapoo from "./Keyboard/Rapo"
 import Microsoftk from "./Keyboard/Microsoftk"
 import Logitechk from "./Keyboard/Logitechk"
+import CartShopping from "./Cartshopping/cartShpping"
 const PublicPage=[
     {path:"/", component: Home, layout: Defaultlayout},
     {path:"/product/:id", component: Products, layout: Defaultlayout},

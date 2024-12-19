@@ -6,6 +6,8 @@ import { request1 } from "../../utils/request";
 import { PricetoString } from "../../Component/Translate_Price";
 import { getCSRFTokenFromCookie } from "../../Component/Token/getCSRFToken";
 import { useSelector } from "react-redux";
+import { Vouchers } from "../../api/vouchers";
+import { FiShoppingCart } from "react-icons/fi";
 function Cartshopping() {
   const [selectedItems, setSlectedItem] = useState([]);
   const [selectedId, setSelectedId] = useState([]);
@@ -188,6 +190,23 @@ function Cartshopping() {
       navigate("/order", { state: selectedItems });
     }
   };
+  const handleOnclinkShowVoucher = async () => {
+    // call API
+    // try{
+    //   const response = await request1.get("vouchers/redeemed_vouchers/", {
+    //     headers: {
+    //       Authorization: `Bearer ${access_token}`,
+    //       "Content-Type": "application/json",
+    //     },
+    //     withCredentials: true,
+    //   });
+    //   console.log(response)
+    // }
+    // catch(e){
+    //   console.log("Lỗi ",e)
+    // }
+    setShowvoucher(true);
+  };
   return user == null ? (
     <div>
       <div className="text-center text-xl font-Montserrat font-semibold my-10">
@@ -202,72 +221,108 @@ function Cartshopping() {
   ) : (
     <div>
       <div className="test bg-gray-50 font-Montserrat">
-        {
-          cartgoods.length>0&&
-        <div className="sticky top-[95vh] md:top-[90vh] h-[5vh] md:h-[10vh] p-1 md:p-4 bg-white border-[1.5px] border-gray-300 z-10 flex items-center text-[8px] md:text-base font-semibold justify-around whitespace-nowrap">
-          <div className="md:basis-25% flex gap-x-2 ">
-            <input
-              type="checkbox"
-              name=""
-              id=""
-              className="md:scale-[200%]"
-              onChange={handleSelectAll}
-              checked={isAllSelected}
-            />
-            <div>
-              <p className="md:flex block">Chọn tất cả</p>
-              <p>({cartgoods && cartgoods.length} sản phẩm)</p>
+        {cartgoods.length > 0 && (
+          <div className="sticky top-[95vh] md:top-[90vh] h-[5vh] md:h-[10vh] p-1 md:p-4 bg-white border-[1.5px] border-gray-300 z-10 flex items-center text-[8px] md:text-base font-semibold justify-around whitespace-nowrap">
+            <div className="md:basis-25% flex gap-x-2 ">
+              <input
+                type="checkbox"
+                name=""
+                id=""
+                className="md:scale-[200%]"
+                onChange={handleSelectAll}
+                checked={isAllSelected}
+              />
+              <div>
+                <p className="md:flex block">Chọn tất cả</p>
+                <p>({cartgoods && cartgoods.length} sản phẩm)</p>
+              </div>
             </div>
-          </div>
-          {/* voucher */}
-          <div className="md:basis-30% block lg:flex mx-6 gap-x-4">
-            <p>Voucher</p>
-            <p
-              className="text-blue-700 cursor-pointer"
-              onClick={() => setShowvoucher(true)}
+            {/* voucher */}
+            <div className="md:basis-30% block lg:flex mx-6 gap-x-4">
+              <p>Voucher</p>
+              <p
+                className="text-blue-700 cursor-pointer"
+                onClick={() => handleOnclinkShowVoucher()}
+              >
+                Chọn hoặc nhập mã
+              </p>
+            </div>
+            <div
+              className={`fixed inset-0 z-10 bg-gray-800 bg-opacity-50 flex justify-center items-center transition-all duration-500 ease-in-out ${
+                showVoucher
+                  ? "opacity-100 block translate-x-0"
+                  : "opacity-0 hidden translate-x-100"
+              }`}
             >
-              Chọn hoặc nhập mã
-            </p>
-          </div>
-          <div
-            className={`fixed inset-0 z-10 bg-gray-800 bg-opacity-50 flex justify-center items-center transition-all duration-500 ease-in-out ${
-              showVoucher
-                ? "opacity-100 block translate-x-0"
-                : "opacity-0 hidden translate-x-100"
-            }`}
-          >
-            <div className="w-[500px] h-[500px] bg-white">
-              <button onClick={() => setShowvoucher(false)}>Hoàn thành</button>
+              <div className="w-[800px] h-[700px] bg-white rounded-xl">
+                <div>
+                  <div>
+                    <p className="pt-5 text-center font-semibold text-xl">
+                      Voucher của bạn
+                    </p>
+                  </div>
+                  {Vouchers.map((item, index) => {
+                    return (
+                      <li
+                        key={item.id}
+                        className="list-none px-2 py-3 my-5 border-[1.5px] border-gray-200 "
+                      >
+                        <div className="grid grid-cols-3 w-full items-center gap-x-5 lg:gap-x-20 md:mx-5">
+                          <div className="w-[100px] h-[100px] lg:w-[150px] lg:h-[150px] bg-primary/60 items-center justify-center block basis-[30%]">
+                            <div className="text-center flex justify-center items-center h-[60%]">
+                              <FiShoppingCart className="text-3xl lg:text-6xl text-gray-100 w-full" />
+                            </div>
+                            <p className="text-xs lg:text-sm font-semibold text-gray-100 text-center whitespace-break-spaces">
+                              {item.voucherName}
+                            </p>
+                          </div>
+                          <p className="text-xs lg:text-base font-semibold text-center">
+                            Giảm {item.promotionalPercentage}% toàn ngành hàng
+                          </p>
+                          <p className="text-2xl ml-16">
+                            X 1
+                          </p>
+                          <div className="ml-4 md:ml-10">
+                          </div>
+                        </div>
+                      </li>
+                    );
+                  })}
+                </div>
+                <div className="flex justify-end mx-5">
+                  <button onClick={() => setShowvoucher(false)} className="button-primary px-5 py-2 bg-primary ">
+                    Hoàn thành
+                  </button>
+                </div>
+              </div>
+            </div>
+            {/* Tổng tiền */}
+            <div className="md:basis-25% block md:flex md:mx-10 md:gap-x-5 items-center">
+              <p className="text-red-500">Tổng tiền:</p>
+              <p>{PricetoString(total())}</p>
+            </div>
+            <div className="button-primary px-2 py-1 lg:px-3 lg:py-2 bg-red-500">
+              <button onClick={() => handleOnclickOrder()}>Mua hàng</button>
             </div>
           </div>
-          {/* Tổng tiền */}
-          <div className="md:basis-25% block md:flex md:mx-10 md:gap-x-5 items-center">
-            <p className="text-red-500">Tổng tiền:</p>
-            <p>{PricetoString(total())}</p>
-          </div>
-          <div className="button-primary px-2 py-1 lg:px-3 lg:py-2 bg-red-500">
-            <button onClick={() => handleOnclickOrder()}>Mua hàng</button>
-          </div>
-        </div>
-        }
+        )}
         {/* tiêu đề */}
-        {
-          cartgoods.length>0&&
-        <div className="text-xs lg:text-base flex justify-between border-[0.5px] rounded-md py-3 my-5 bg-white font-semibold mt-[-5vh] md:mt-[-10vh]">
-          <p className=" basis-[40%] lg:basis-[50%] pl-1 lg:pl-10">
-            Tất cả sản phẩm
-          </p>
-          <div className=" basis-[60%] lg:basis-[50%] flex justify-around">
-            {title1s.map((title1, index) => {
-              return (
-                <li key={index} className="list-none">
-                  {title1}
-                </li>
-              );
-            })}
+        {cartgoods.length > 0 && (
+          <div className="text-xs lg:text-base flex justify-between border-[0.5px] rounded-md py-3 my-5 bg-white font-semibold mt-[-5vh] md:mt-[-10vh]">
+            <p className=" basis-[40%] lg:basis-[50%] pl-1 lg:pl-10">
+              Tất cả sản phẩm
+            </p>
+            <div className=" basis-[60%] lg:basis-[50%] flex justify-around">
+              {title1s.map((title1, index) => {
+                return (
+                  <li key={index} className="list-none">
+                    {title1}
+                  </li>
+                );
+              })}
+            </div>
           </div>
-        </div>
-        }
+        )}
         {/* sản phẩm */}
         {cartgoods && cartgoods.length < 0 ? (
           <div className="text-sm font-bold lg:text-base text-center mx-3  h-[200px] md:h-[500px]">
@@ -276,7 +331,7 @@ function Cartshopping() {
         ) : (
           <div>
             <div className="bg-white lg:mx-5 my-5 border-[1px] border-gray-50">
-              {cartgoods.length > 0 ?
+              {cartgoods.length > 0 ? (
                 cartgoods.map((item) => {
                   const product = item.good;
                   return (
@@ -343,11 +398,11 @@ function Cartshopping() {
                     </li>
                   );
                 })
-              :
-              <div className="h-[500px] text-center font-semibold py-5">
-                Bạn chưa có sản phẩm nào trong giỏ hàng
-              </div>
-              }
+              ) : (
+                <div className="h-[500px] text-center font-semibold py-5">
+                  Bạn chưa có sản phẩm nào trong giỏ hàng
+                </div>
+              )}
             </div>
           </div>
         )}

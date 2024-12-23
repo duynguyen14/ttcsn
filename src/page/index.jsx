@@ -25,7 +25,8 @@ import CartShopping from "./Cartshopping/cartShpping"
 const PublicPage=[
     {path:"/", component: Home, layout: Defaultlayout},
     {path:"/product/:id", component: Products, layout: Defaultlayout},
-    {path:"/cartshopping", component: Cartshopping, layout: Defaultlayout},
+    // {path:"/cartshopping", component: Cartshopping, layout: Defaultlayout},
+    {path:"/cartshopping", component: CartShopping, layout: Defaultlayout},
     {path:"/about", component: About, layout: Defaultlayout},
     {path:"/profile", component: Profile, layout: Defaultlayout},
     {path:"/saleproduct", component: SaleProducts, layout: Defaultlayout},
@@ -45,7 +46,6 @@ const PublicPage=[
     {path:"/keyboard/logitech", component: Logitechk, layout: Defaultlayout},
     {path:"/keyboard/microsoft", component: Microsoftk, layout: Defaultlayout},
     {path:"/keyboard/rapoo", component: Rapoo, layout: Defaultlayout},
-
 ]
 const PrivatePage=[
 

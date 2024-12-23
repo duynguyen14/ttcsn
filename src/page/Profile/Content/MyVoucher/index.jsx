@@ -12,7 +12,26 @@ function Myvoucher() {
   const [vouchers, setVouchers] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const access_token = getCSRFTokenFromCookie("access_token");
-
+  useEffect(()=>{
+    const fetch=async()=>{
+      try{
+        const respone= await request1.get("user/profile/",{
+          headers: {
+            Authorization: `Bearer ${access_token}`,
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
+        })
+        console.log(respone);
+        localStorage.setItem("user",JSON.stringify(respone.data.user));
+        setLoyaltyPoint(respone.data.user.loyaltyPoints)
+      }
+      catch(e){
+        console.log("Lỗi",e)
+      }
+    }
+    fetch();
+  },[])
   const handleOnclickDoi = async (item) => {
     if (loyaltyPoint < item.points_required) {
       alert("Bạn chưa đủ điểm để đổi voucher này");
@@ -75,7 +94,6 @@ function Myvoucher() {
         setIsLoading(false);
       }
     };
-
     fetchVouchers();
   }, [access_token]);
 

@@ -1,8 +1,12 @@
 import { HiPlusSm } from "react-icons/hi";
 import { RiSubtractFill } from "react-icons/ri";
 import { request1 } from "../../utils/request";
-
-function CartItem({ item, setCartgoods, setSelectedItems, setSelectedId, access_token }) {
+import { PricetoString } from "../../Component/Translate_Price";
+function CartItem({
+  item,
+  setCartgoods,
+  access_token,
+}) {
   const handleClickPlus = async () => {
     try {
       await request1.patch(
@@ -16,7 +20,9 @@ function CartItem({ item, setCartgoods, setSelectedItems, setSelectedId, access_
         }
       );
       setCartgoods((prev) =>
-        prev.map((i) => (i.id === item.id ? { ...i, quantity: i.quantity + 1 } : i))
+        prev.map((i) =>
+          i.id === item.id ? { ...i, quantity: i.quantity + 1 } : i
+        )
       );
     } catch (error) {
       console.error("Lỗi khi tăng số lượng:", error);
@@ -37,7 +43,9 @@ function CartItem({ item, setCartgoods, setSelectedItems, setSelectedId, access_
         }
       );
       setCartgoods((prev) =>
-        prev.map((i) => (i.id === item.id ? { ...i, quantity: i.quantity - 1 } : i))
+        prev.map((i) =>
+          i.id === item.id ? { ...i, quantity: i.quantity - 1 } : i
+        )
       );
     } catch (error) {
       console.error("Lỗi khi giảm số lượng:", error);
@@ -62,42 +70,48 @@ function CartItem({ item, setCartgoods, setSelectedItems, setSelectedId, access_
   };
 
   return (
-    <div className="flex items-center justify-between bg-white shadow-sm rounded-md p-4 mb-4">
-      {/* Hiển thị ảnh sản phẩm */}
-      <div className="flex items-center gap-4">
-        <img
-          src={item.good.image} // Thay bằng trường dữ liệu ảnh của bạn
-          alt={item.good.name}
-          className="w-20 h-20 object-cover rounded-md"
-        />
-        {/* Thông tin sản phẩm */}
-        <div>
-          <p className="font-semibold text-gray-700">{item.good.name}</p>
-          <p className="text-gray-500">Giá: {item.good.price}₫</p>
+    <div className="flex items-center bg-white shadow-sm rounded-md p-4 mb-4">
+      <div className="flex basis-[40%] lg:basis-[50%] px-1 lg:pl-5">
+        <div className="flex items-center">
+          <img
+            src={`http://127.0.0.1:8888${item.good.image}`}
+            alt=""
+            className=" w-[50px] h-[50px] lg:w-[150px] lg:h-[150px]"
+          />
+          <p className="font-semibold text-[8px] md:text-sm lg:text-base px-1">
+            {item.good.goodName}
+          </p>
         </div>
       </div>
-
-      {/* Phần điều khiển số lượng và xóa */}
-      <div className="flex items-center gap-4">
-        <button
-          onClick={handleClickSubtraction}
-          className="p-2 bg-gray-200 hover:bg-gray-300 rounded-md"
-        >
-          <RiSubtractFill />
-        </button>
-        <p>{item.quantity}</p>
-        <button
-          onClick={handleClickPlus}
-          className="p-2 bg-gray-200 hover:bg-gray-300 rounded-md"
-        >
-          <HiPlusSm />
-        </button>
-        <button
-          onClick={handleDelete}
-          className="text-red-500 hover:text-red-700 font-semibold"
+      <div className="basis-[60%] flex items-center text-[8px] md:text-xs lg:text-base px-2 justify-around">
+        {/* giá cả */}
+        <p className="text-red-500 font-semibold">
+          {
+          
+          PricetoString(item.good.price.split(".")[0])}
+        </p>
+        {/* số lượng sản phẩm */}
+        <div className="font-bold">
+          <p className="flex md:gap-x-1 items-center">
+            Số lượng:
+            <RiSubtractFill
+              className="cursor-pointer mx-1 lg:mx-2 md:border-[2px]"
+              onClick={() => handleClickSubtraction(item.id, item)}
+            />
+            {item.quantity}
+            <HiPlusSm
+              className="cursor-pointer mx-1 lg:mx-2 md:border-[2px]"
+              onClick={() => handleClickPlus(item.id, item)}
+            />
+          </p>
+        </div>
+        {/* thao tác */}
+        <span
+          className="text-red-500 font-semibold cursor-pointer"
+          onClick={() => handleDelete(item.id, item)}
         >
           Xóa
-        </button>
+        </span>
       </div>
     </div>
   );

@@ -206,7 +206,7 @@ function Cartshopping() {
       });
       // Chỉ lấy danh sách các voucher từ dữ liệu trả về
       const vouchers = response.data.map((item) => item.voucher);
-
+      console.log(response.data);
       console.log(vouchers); // Debug xem kết quả
       setVouchers(vouchers); // Cập nhật state với danh sách voucher
     }
@@ -223,8 +223,6 @@ function Cartshopping() {
     setTotalAmount(total() - discount);
     setShowvoucher(false);  // Ẩn modal
   };
-  
-
 
   return user == null ? (
     <div>
@@ -276,9 +274,9 @@ function Cartshopping() {
               <div className="w-[800px] h-[700px] bg-white rounded-xl">
                 <div>
                   <p className="pt-5 text-center font-semibold text-xl">Voucher của bạn</p>
-                  {vouchers.map((item) => (
+                  {vouchers.map((item,index) => (
                     <li
-                      key={item.id}
+                      key={index}
                       className="list-none px-2 py-3 my-5 border-[1.5px] border-gray-200 cursor-pointer hover:bg-gray-100 transition-all duration-300"
                       onClick={() => handleSelectVoucher(item)} // Chọn voucher
                     >

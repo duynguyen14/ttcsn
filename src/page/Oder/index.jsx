@@ -1,87 +1,77 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { FaMapMarkerAlt } from "react-icons/fa";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { PricetoString } from "../../Component/Translate_Price";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { request1 } from "../../utils/request";
 import { getCSRFTokenFromCookie } from "../../Component/Token/getCSRFToken";
+import AddressOD from "./AddresOD";
 function Order({}) {
   const user = useSelector((state) => state.user.user);
   const location = useLocation();
-  const SelectedItems = location.state;
+  const { cartgoods, totalPrice, selectedVoucher } = location.state;
   const navigate = useNavigate();
-  const [goodOrder,setGoodOrder]=useState(SelectedItems);
-  const [address, setAddress] = useState({
-    phone: "",
-    name: "",
-    city:"",
-    addressct: "",
-  });
+  const [goodOrder, setGoodOrder] = useState(cartgoods);
+  const [selectAddress,setSelectAddress]=useState(null)
+  const [address,setAddress]=useState([]);
+  // console.log("1", typeof cartgoods);
+  // console.log("2", location.state);
+  const [showAddress,setShowAddress]=useState(false)
   const access_token = getCSRFTokenFromCookie("access_token");
-  const [message, setMessage] = useState(false);
-  console.log("sản phẩm: ", SelectedItems);
-  const total = () => {
-    let total = 0;
-    if (SelectedItems && SelectedItems.length > 0) {
-      SelectedItems.forEach((item) => {
-        total += item.quantity * parseInt(item.good.price.split(".")[0]);
-      });
-    }
-
-    return total;
-  };
-  const check = () => {
-    if (
-      address.name === "" ||
-      address.phone === "" ||
-      address.city===""||
-      address.addressct === ""
-    ) {
-      setMessage(true);
-      return false;
-    } else {
-      setMessage(false);
-      return true;
-    }
-  };
-  const handleOnchange = (e) => {
-    e.preventDefault();
-    const { name, value } = e.target;
-    setAddress({
-      ...address,
-      [name]: value,
-    });
-  };
   const title = ["Đơn giá", "Số lượng", "Thành tiền"];
-  const HandleOnclickOrder = async() => {
-    if(!check()){
-      alert("Điền đẩy đủ thông tin địa chỉ")
-      return
+  const HandleOnclickOrder = async () => {
+    if(!selectAddress){
+      alert("Bạn chưa thiết lập địa chỉ giao hàng")
+      return;
     }
     if (window.confirm("Bạn xác nhận đặt đơn hàng này")) {
-      try{
-        const respone = await request1.post("order/", 
+      const addressShip=`${selectAddress.name}.${selectAddress.phone}.${selectAddress.city}.${selectAddress.addressct}`
+      try {
+        const respone = await request1.post(
+          "order/",
           {
-            shipping_address: address.name+"."+address.phone+"."+address.city+"."+address.addressct,
-            goods:SelectedItems
+            shipping_address:addressShip,
+            goods: cartgoods,
           },
-          {headers: {
-            Authorization: `Bearer ${access_token}`,
-            "Content-Type": "application/json",
-          },
-          withCredentials: true,
-        });
-        console.log(respone)
-      }
-      catch(error){
-        console.log("Lỗi ",error)
+          {
+            headers: {
+              Authorization: `Bearer ${access_token}`,
+              "Content-Type": "application/json",
+            },
+            withCredentials: true,
+          }
+        );
+        console.log(respone);
+      } catch (error) {
+        console.log("Lỗi ", error);
       }
       alert("Đơn hàng đã được đặt thành công! ");
       setGoodOrder([]);
       navigate("/profile");
     }
   };
+  const handleOnclickShowAddress=async()=>{
+    try{
+      const respone=await request1.get("user/addresses/",{
+        headers: {
+          Authorization: `Bearer ${access_token}`,
+          "Content-Type": "application/json",
+        },
+        withCredentials: true,
+      });
+      console.log(respone.data)
+      setAddress(respone.data);
+      setShowAddress(true)
+    }
+    catch(e){
+      console.log("Lỗi",e)
+    }
+  }
+  const handleSelectAddress=(item)=>{
+    setSelectAddress(item)
+  }
+  console.log("9",selectAddress)
   return user == null ? (
     <div>
       <div className="text-center text-xl font-Montserrat font-semibold my-10">
@@ -104,64 +94,23 @@ function Order({}) {
         </div>
         {/*  địa chỉ nhận hàng */}
         <div className="test py-5 my-5 border-[1px] border-gray-100 bg-white">
-          <div className="mx-5 my-3 flex gap-x-5 items-center">
-            <FaMapMarkerAlt className="text-2xl text-primary" />
-            <p className="text-xl font-semibold text-primary">
-              Địa chỉ nhận hàng
-            </p>
-          </div>
-          <div className="mx-10 py-5">
-            <form className="grid grid-cols-1 gap-y-3 w-full">  
-                <input
-                  type="text"
-                  placeholder="Họ tên người nhận"
-                  className={`border-2 border-gray-400 p-2 mb-4 w-[50%] focus:outline-primary ${
-                    message === true && address.name === ""
-                      ? "outline-red-500 border-red-500 placeholder:text-red-500"
-                      : "outline-primary border-primary"
-                  }`}
-                  value={address.name}
-                  name="name"
-                  onChange={(e) => handleOnchange(e)}
-                />
-                <input
-                  type="text"
-                  placeholder="Số điện thoại"
-                  className={`border-2 border-gray-400 p-2 mb-4 w-[50%] focus:outline-primary ${
-                    message === true && address.phone === ""
-                      ? "outline-red-500 border-red-500 placeholder:text-red-500"
-                      : "outline-primary border-primary"
-                  }`}
-                  value={address.phone}
-                  name="phone"
-                  onChange={(e) => handleOnchange(e)}
-                />
-             
-              <input
-                type="tel"
-                placeholder="Tỉnh thành phố"
-                className={`border-2 border-gray-400 p-2 mb-4 w-[60%]  focus:outline-primary ${
-                  message === true&& address.city===""
-                    ? "outline-red-500 border-red-500 placeholder:text-red-500"
-                    : "outline-primary border-primary"
-                }`}
-                value={address.city}
-                name="city"
-                onChange={(e)=>handleOnchange(e)}
-              />
-              <input
-                type="text"
-                placeholder="Địa chỉ nhận hàng"
-                className={`border-2 border-gray-400 p-2 mb-4 w-[60%]  focus:outline-primary ${
-                  message === true && address.addressct === ""
-                    ? "outline-red-500 border-red-500 placeholder:text-red-500"
-                    : "outline-primary border-primary"
-                }`}
-                value={address.addressct}
-                name="addressct"
-                onChange={(e) => handleOnchange(e)}
-              />
-            </form>
+          <div className="mx-5 my-3 flex justify-between items-center">
+            <div className="flex gap-x-5 items-center ">
+              <FaMapMarkerAlt className="text-2xl text-primary" />
+              <p className="text-xl font-semibold text-primary">
+                Địa chỉ nhận hàng
+              </p>
+            </div>
+            <div className="font-Montserrat font-semibold text-blue-500 mx-5">
+              <p className="cursor-pointer" onClick={()=>handleOnclickShowAddress()}>
+                Chọn địa chỉ nhận hàng của bạn
+              </p>
+              {
+                selectAddress&& <p className="text-primary text-center">
+                  (1 địa chỉ đã được chọn)
+                </p>
+              }
+            </div>
           </div>
         </div>
         <div className="bg-white test">
@@ -224,8 +173,15 @@ function Order({}) {
             })}
         </div>
         <div className=" test py-10 px-3 my-10 font-bold flex justify-between bg-white">
-          <p>Tổng tiền:</p>
-          <p className="text-red-500">{PricetoString(total()) || 0}đ</p>
+            <p>Tổng tiền:</p>
+          <div className="flex justify-center items-center">
+            <p className="text-red-500 pr-5">{PricetoString(totalPrice) || 0}đ</p>
+            {selectedVoucher && (
+              <p className="text-primary font-semibold text-sm">
+                (1 voucher đã được sử dụng)
+              </p>
+            )}
+          </div>
         </div>
         <div className="test flex justify-end mr-5 py-10">
           <button
@@ -234,6 +190,18 @@ function Order({}) {
           >
             Đặt hàng
           </button>
+        </div>
+        <div>
+          {
+            showAddress&&
+            <AddressOD 
+            onChange={handleOnclickShowAddress} 
+            setShowAddress={setShowAddress} 
+            handleSelectAddress={handleSelectAddress} 
+            address={address}
+            selectAddress={selectAddress}
+            />
+          }
         </div>
       </div>
     )

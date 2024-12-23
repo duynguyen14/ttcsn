@@ -1,26 +1,27 @@
-function CartFooter({ cartgoods, isAllSelected, handleSelectAll, selectedItems, handleOnclickOrder, setShowVoucher }) {
-    const total = () => selectedItems.reduce((sum, item) => sum + item.quantity * item.good.price, 0);
-  
-    return (
-      <div className="sticky bottom-0 bg-white p-4">
-        <div className="flex justify-between items-center">
-          <div>
-            <input type="checkbox" checked={isAllSelected} onChange={handleSelectAll} />
-            <span>Chọn tất cả ({cartgoods.length} sản phẩm)</span>
-          </div>
-          <div>
-            <button onClick={() => setShowVoucher(true)}>Chọn voucher</button>
-          </div>
-          <div>
-            <span>Tổng tiền: {total()}</span>
-          </div>
-          <button onClick={handleOnclickOrder} className="bg-red-500 px-4 py-2 text-white">
-            Mua hàng
-          </button>
-        </div>
+function CartFooter({ totalPrice, handleOnclickOrder, showVoucher,selectedVoucher }) {
+  console.log("3",selectedVoucher)
+  return (
+    <div className="flex justify-between items-center p-5 bg-white shadow-md font-Montserrat">
+      <div className="flex justify-center items-center">
+        <p className="text-lg font-semibold text-red-500 pr-5">
+              Tổng tiền: {totalPrice} VND
+        </p>    
+          {selectedVoucher&&
+          <p className="text-primary font-semibold text-sm">
+            (1 voucher đã được sử dụng)
+          </p>
+          }
       </div>
-    );
-  }
-  
-  export default CartFooter;
-  
+      <div className="flex gap-3">  
+        <button onClick={showVoucher} className="button-primary px-4 py-2 bg-primary">
+          Chọn voucher
+        </button>
+        <button onClick={handleOnclickOrder} className="button-primary px-4 py-2 bg-green-500">
+          Đặt hàng
+        </button>
+      </div>
+    </div>
+  );
+}
+
+export default CartFooter;

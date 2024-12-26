@@ -102,49 +102,55 @@ function Myvoucher() {
   }
 
   return (
-    <div className="font-Montserrat">
-      <div className="text-base lg:text-xl font-bold lg:mx-10 lg:my-10 text-primary">
-        Điểm của bạn: {loyaltyPoint} (Tích nhiều điểm để nhận voucher)
-      </div>
+    <div className="font-Montserrat px-4 py-6 lg:px-10 lg:py-10 bg-gray-50 min-h-screen">
+  <div className="bg-primary/10 text-primary text-center py-4 rounded-lg shadow-md">
+    <h1 className="text-xl lg:text-3xl font-bold mb-2">Điểm của bạn:</h1>
+    <p className="text-2xl lg:text-4xl font-extrabold">{loyaltyPoint}</p>
+    <p className="text-sm lg:text-base font-medium text-gray-600">
+      Tích nhiều điểm để nhận voucher
+    </p>
+  </div>
 
-      <div className="lg:mx-2 lg:my-5">
-        {vouchers.length > 0 ? (
-          vouchers.map((item) => (
-            <li
-              key={item.id}
-              className="list-none px-2 py-3 my-5 border-[1.5px] border-gray-200 "
-            >
-              <div className="grid grid-cols-3 w-full items-center gap-x-5 lg:gap-x-20 md:mx-5">
-                <div className="w-[100px] h-[100px] lg:w-[150px] lg:h-[150px] bg-primary/60 items-center justify-center block basis-[30%]">
-                  <div className="text-center flex justify-center items-center h-[60%]">
-                    <FiShoppingCart className="text-3xl lg:text-6xl text-gray-100 w-full" />
-                  </div>
-                  <p className="text-xs lg:text-sm font-semibold text-gray-100 text-center">
-                    {item.title}
-                  </p>
-                </div>
-                <p className="text-xs lg:text-base font-semibold text-center">
-                  {item.title}
-                </p>
-                <div className="ml-4 md:ml-10">
-                  <button
-                    className="button-primary bg-primary px-2 py-2 lg:px-3 lg:py-3 text-xs lg:text-base font-semibold hover:bg-primary/60"
-                    onClick={() => handleOnclickDoi(item)}
-                  >
-                    Đổi điểm
-                  </button>
-                </div>
-              </div>
-              <div className="text-end text-xs lg:text-base font-semibold text-red-500">
-                <p>Yêu cầu {item.points_required} điểm</p>
-              </div>
-            </li>
-          ))
-        ) : (
-          <p>Không có voucher nào để đổi.</p>
-        )}
-      </div>
-    </div>
+  {/* Vouchers */}
+  <div className="space-y-6 mt-6">
+    {vouchers.length > 0 ? (
+      vouchers.map((item) => (
+        <div
+          key={item.id}
+          className="flex items-center justify-between bg-white rounded-lg shadow-lg border border-gray-200 p-4 hover:shadow-xl transition-shadow"
+        >
+          {/* Nội dung voucher */}
+          <div className="flex items-center space-x-4">
+            <div className="w-20 h-20 lg:w-24 lg:h-24 flex items-center justify-center bg-primary/10 rounded-full">
+              <FiShoppingCart className="text-4xl lg:text-5xl text-primary" />
+            </div>
+            <div>
+              <h3 className="text-sm lg:text-lg font-semibold text-gray-700">
+                {item.title}
+              </h3>
+              <p className="text-xs lg:text-sm font-medium text-red-500">
+                Yêu cầu {item.points_required} điểm
+              </p>
+            </div>
+          </div>
+
+          {/* Nút đổi điểm */}
+          <button
+            className="bg-primary text-white text-xs lg:text-sm font-semibold px-4 py-2 lg:px-6 lg:py-3 rounded-lg shadow hover:bg-primary/90 transition-all"
+            onClick={() => handleOnclickDoi(item)}
+          >
+            Đổi điểm
+          </button>
+        </div>
+      ))
+    ) : (
+      <p className="text-center text-gray-500 text-sm lg:text-base">
+        Không có voucher nào để đổi.
+      </p>
+    )}
+  </div>
+</div>
+
   );
 }
 

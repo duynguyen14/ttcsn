@@ -11,6 +11,7 @@ function ImageProduct({ id }) {
   const statusUser = useSelector((state) => state.user.status);
   const navigate = useNavigate();
   const access_token = getCSRFTokenFromCookie("access_token"); // Sử dụng hàm getCSRFTokenFromCookie
+  // console.log(access_token);
   const sales = [
     "Giảm đến 10% phụ kiện & đồ công nghệ khác khi mua kèm máy.",
     "Giảm đến 3 triệu với Thu cũ đổi mới lên đời laptop",

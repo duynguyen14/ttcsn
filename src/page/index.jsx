@@ -1,4 +1,5 @@
 import { Defaultlayout } from "../Component/Layouts"
+import AdminLayout from "../Component/Layouts/AdminLayout"
 import About from "./About"
 import Cartshopping from "./Cartshopping"
 import Home from "./Home"
@@ -22,6 +23,11 @@ import Rapoo from "./Keyboard/Rapo"
 import Microsoftk from "./Keyboard/Microsoftk"
 import Logitechk from "./Keyboard/Logitechk"
 import CartShopping from "./Cartshopping/cartShpping"
+import AdminHome from "./Admin/AdminHome"
+import ManagementUser from "./Admin/ManaUser"
+import ManagementBill from "./Admin/ManaBill"
+import ManagementGood from "./Admin/ManaGood/indes"
+import LoginForm from "./Admin/LoginAdmin"
 const PublicPage=[
     {path:"/", component: Home, layout: Defaultlayout},
     {path:"/product/:id", component: Products, layout: Defaultlayout},
@@ -46,6 +52,13 @@ const PublicPage=[
     {path:"/keyboard/logitech", component: Logitechk, layout: Defaultlayout},
     {path:"/keyboard/microsoft", component: Microsoftk, layout: Defaultlayout},
     {path:"/keyboard/rapoo", component: Rapoo, layout: Defaultlayout},
+    // admin
+    {path:"/admin/login", component: LoginForm, layout: null},
+    {path:"/admin", component: AdminHome, layout: AdminLayout},
+    {path:"/admin/manageuser", component: ManagementUser, layout: AdminLayout},
+    {path:"/admin/managebill", component: ManagementBill, layout: AdminLayout},
+    {path:"/admin/managegood", component: ManagementGood, layout: AdminLayout},
+    
 ]
 const PrivatePage=[
 

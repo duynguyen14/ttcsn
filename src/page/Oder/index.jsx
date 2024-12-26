@@ -13,25 +13,25 @@ function Order({}) {
   const { cartgoods, totalPrice, selectedVoucher } = location.state;
   const navigate = useNavigate();
   const [goodOrder, setGoodOrder] = useState(cartgoods);
-  const [selectAddress,setSelectAddress]=useState(null)
-  const [address,setAddress]=useState([]);
+  const [selectAddress, setSelectAddress] = useState(null);
+  const [address, setAddress] = useState([]);
   // console.log("1", typeof cartgoods);
   // console.log("2", location.state);
-  const [showAddress,setShowAddress]=useState(false)
+  const [showAddress, setShowAddress] = useState(false);
   const access_token = getCSRFTokenFromCookie("access_token");
   const title = ["Đơn giá", "Số lượng", "Thành tiền"];
   const HandleOnclickOrder = async () => {
-    if(!selectAddress){
-      alert("Bạn chưa thiết lập địa chỉ giao hàng")
+    if (!selectAddress) {
+      alert("Bạn chưa thiết lập địa chỉ giao hàng");
       return;
     }
     if (window.confirm("Bạn xác nhận đặt đơn hàng này")) {
-      const addressShip=`${selectAddress.name}.${selectAddress.phone}.${selectAddress.city}.${selectAddress.addressct}`
+      const addressShip = `${selectAddress.name}.${selectAddress.phone}.${selectAddress.city}.${selectAddress.addressct}`;
       try {
         const respone = await request1.post(
           "order/",
           {
-            shipping_address:addressShip,
+            shipping_address: addressShip,
             goods: cartgoods,
           },
           {
@@ -46,32 +46,59 @@ function Order({}) {
       } catch (error) {
         console.log("Lỗi ", error);
       }
+      if(selectedVoucher){
+        handleVoucherUsage();
+      }
       alert("Đơn hàng đã được đặt thành công! ");
       setGoodOrder([]);
       navigate("/profile");
     }
   };
-  const handleOnclickShowAddress=async()=>{
-    try{
-      const respone=await request1.get("user/addresses/",{
-        headers: {
-          Authorization: `Bearer ${access_token}`,
-          "Content-Type": "application/json",
-        },
-        withCredentials: true,
-      });
-      console.log(respone.data)
-      setAddress(respone.data);
-      setShowAddress(true)
+  const handleOnclickShowAddress = () => {
+    setShowAddress(true);
+  };
+  useEffect(() => {
+    const fetch = async () => {
+      try {
+        const respone = await request1.get("user/addresses/", {
+          headers: {
+            Authorization: `Bearer ${access_token}`,
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
+        });
+        console.log(respone.data);
+        setAddress(respone.data);
+      } catch (e) {
+        console.log("Lỗi", e);
+      }
+    };
+    fetch();
+  }, []);
+  const handleSelectAddress = (item) => {
+    setSelectAddress(item);
+  };
+  console.log("10",selectedVoucher);
+  const handleVoucherUsage = async () => {
+    if (selectedVoucher) {
+      try {
+        const response = await request1.patch(
+          `vouchers/redeemed_vouchers/${selectedVoucher.voucher.id}`, 
+          {
+            headers: {
+              Authorization: `Bearer ${access_token}`,
+              "Content-Type": "application/json",
+            },
+            withCredentials: true,
+          }
+        );
+        console.log("Voucher đã được sử dụng:", response);
+        // Sau khi sử dụng voucher thành công, bạn có thể cập nhật lại voucher ở frontend hoặc trạng thái
+      } catch (error) {
+        console.log("Lỗi khi sử dụng voucher", error);
+      }
     }
-    catch(e){
-      console.log("Lỗi",e)
-    }
-  }
-  const handleSelectAddress=(item)=>{
-    setSelectAddress(item)
-  }
-  console.log("9",selectAddress)
+  }; 
   return user == null ? (
     <div>
       <div className="text-center text-xl font-Montserrat font-semibold my-10">
@@ -102,14 +129,23 @@ function Order({}) {
               </p>
             </div>
             <div className="font-Montserrat font-semibold text-blue-500 mx-5">
-              <p className="cursor-pointer" onClick={()=>handleOnclickShowAddress()}>
-                Chọn địa chỉ nhận hàng của bạn
-              </p>
-              {
-                selectAddress&& <p className="text-primary text-center">
+              {address.length > 0 ? (
+                <p
+                  className="cursor-pointer"
+                  onClick={() => handleOnclickShowAddress()}
+                >
+                  Chọn địa chỉ nhận hàng của bạn
+                </p>
+              ) : (
+                <Link to={"/profile"}>
+                  Bạn chưa thiết lập địa chỉ nhận hàng thiết lập ngay
+                </Link>
+              )}
+              {selectAddress && (
+                <p className="text-primary text-center">
                   (1 địa chỉ đã được chọn)
                 </p>
-              }
+              )}
             </div>
           </div>
         </div>
@@ -173,14 +209,19 @@ function Order({}) {
             })}
         </div>
         <div className=" test py-10 px-3 my-10 font-bold flex justify-between bg-white">
-            <p>Tổng tiền:</p>
+          <p>Tổng tiền:</p>
           <div className="flex justify-center items-center">
-            <p className="text-red-500 pr-5">{PricetoString(totalPrice) || 0}đ</p>
-            {selectedVoucher && (
-              <p className="text-primary font-semibold text-sm">
-                (1 voucher đã được sử dụng)
+            <div className="text-left">
+              {selectedVoucher && (
+                <p className="text-primary font-semibold text-sm">
+                  {selectedVoucher.voucher.title}
+                  &nbsp;đã được áp dụng
+                </p>
+              )}
+              <p className="text-red-500 pr-5 pl-48">
+                {PricetoString(totalPrice) || 0}đ
               </p>
-            )}
+            </div>
           </div>
         </div>
         <div className="test flex justify-end mr-5 py-10">
@@ -192,16 +233,15 @@ function Order({}) {
           </button>
         </div>
         <div>
-          {
-            showAddress&&
-            <AddressOD 
-            onChange={handleOnclickShowAddress} 
-            setShowAddress={setShowAddress} 
-            handleSelectAddress={handleSelectAddress} 
-            address={address}
-            selectAddress={selectAddress}
+          {showAddress && (
+            <AddressOD
+              onChange={handleOnclickShowAddress}
+              setShowAddress={setShowAddress}
+              handleSelectAddress={handleSelectAddress}
+              address={address}
+              selectAddress={selectAddress}
             />
-          }
+          )}
         </div>
       </div>
     )

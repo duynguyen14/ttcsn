@@ -4,7 +4,7 @@ function CartFooter({
   showVoucher,
   selectedVoucher,
 }) {
-  console.log("3", selectedVoucher);
+  console.log("voucher", selectedVoucher);
   return (
     <div className="flex justify-between items-center p-5 bg-white shadow-md font-Montserrat">
       <div className="flex justify-center items-center">

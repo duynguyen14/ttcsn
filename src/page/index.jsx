@@ -1,7 +1,7 @@
 import { Defaultlayout } from "../Component/Layouts"
 import AdminLayout from "../Component/Layouts/AdminLayout"
 import About from "./About"
-import Cartshopping from "./Cartshopping"
+// import Cartshopping from "./Cartshopping"
 import Home from "./Home"
 import Login from "./Login"
 import Products from "./Product"

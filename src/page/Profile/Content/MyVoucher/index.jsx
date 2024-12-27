@@ -6,25 +6,49 @@ import { request1 } from "../../../../utils/request";
 import { getCSRFTokenFromCookie } from "../../../../Component/Token/getCSRFToken";
 
 function Myvoucher() {
-  const UserInfor = useSelector((state) => state.user.user);
+  // const UserInfor = useSelector((state) => state.user.user);
   const dispatch = useDispatch();
-  const [loyaltyPoint, setLoyaltyPoint] = useState(UserInfor?.loyaltyPoints || 0);
+  const [loyaltyPoint, setLoyaltyPoint] = useState(0);
   const [vouchers, setVouchers] = useState([]);
+  const [vouchersUser, setVouchersUser] = useState([])
   const [isLoading, setIsLoading] = useState(true);
   const access_token = getCSRFTokenFromCookie("access_token");
+// load voucher
+  useEffect(() => {
+    const fetchVouchers = async () => {
+      try {
+        const response = await request1.get("vouchers/", {
+          headers: {
+            Authorization: `Bearer ${access_token}`,
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
+        });
+        console.log(response.data);
+        setVouchers(response.data);
+      } catch (error) {
+        console.error("Lỗi khi lấy danh sách voucher:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchVouchers();
+  }, [access_token]);
+
+  // load user for get point
   useEffect(()=>{
     const fetch=async()=>{
       try{
-        const respone= await request1.get("user/profile/",{
+        const response= await request1.get("user/profile/",{
           headers: {
             Authorization: `Bearer ${access_token}`,
             "Content-Type": "application/json",
           },
           withCredentials: true,
         })
-        console.log(respone);
-        localStorage.setItem("user",JSON.stringify(respone.data.user));
-        setLoyaltyPoint(respone.data.user.loyaltyPoints)
+        console.log(response);
+        
+        setLoyaltyPoint(response.data.user.loyaltyPoints)
       }
       catch(e){
         console.log("Lỗi",e)
@@ -32,6 +56,30 @@ function Myvoucher() {
     }
     fetch();
   },[])
+
+ // load user's voucher to set display "doi" button
+ useEffect(()=>{
+  const fetch= async()=> {
+    try {
+      const response = await request1.get("vouchers/redeemed_vouchers/",{
+        headers: {
+          Authorization: `Bearer ${access_token}`,
+          "Content-Type": "application/json",
+        },
+        withCredentials: true,
+      })
+      setVouchersUser(response.data);
+
+    }
+    catch(e) {
+      console.log("Error",e);
+    }
+  
+  }
+  fetch();
+},[loyaltyPoint])
+
+
   const handleOnclickDoi = async (item) => {
     if (loyaltyPoint < item.points_required) {
       alert("Bạn chưa đủ điểm để đổi voucher này");
@@ -74,32 +122,16 @@ function Myvoucher() {
       }
     }
   };
-  
 
-  useEffect(() => {
-    const fetchVouchers = async () => {
-      try {
-        const response = await request1.get("vouchers/", {
-          headers: {
-            Authorization: `Bearer ${access_token}`,
-            "Content-Type": "application/json",
-          },
-          withCredentials: true,
-        });
-        console.log(response.data);
-        setVouchers(response.data);
-      } catch (error) {
-        console.error("Lỗi khi lấy danh sách voucher:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    fetchVouchers();
-  }, [access_token]);
+  const isVoucherRedeemed = (voucherId) => {
+    return vouchersUser.some((v) => v.voucher.id === voucherId);
+  };
+  
 
   if (isLoading) {
     return <p>Đang tải voucher...</p>;
   }
+
 
   return (
     <div className="font-Montserrat px-4 py-6 lg:px-10 lg:py-10 bg-gray-50 min-h-screen">
@@ -136,11 +168,16 @@ function Myvoucher() {
 
           {/* Nút đổi điểm */}
           <button
-            className="bg-primary text-white text-xs lg:text-sm font-semibold px-4 py-2 lg:px-6 lg:py-3 rounded-lg shadow hover:bg-primary/90 transition-all"
-            onClick={() => handleOnclickDoi(item)}
-          >
-            Đổi điểm
-          </button>
+                className={`${
+                  isVoucherRedeemed(item.id)
+                    ? "bg-gray-400 "
+                    : "bg-primary text-white"
+                } text-xs lg:text-sm font-semibold px-4 py-2 lg:px-6 lg:py-3 rounded-lg shadow hover:bg-primary/90 transition-all`}
+                onClick={() => handleOnclickDoi(item)}
+                // disabled={isVoucherRedeemed(item.id)} // Disable nếu voucher đã đổi
+              >
+                {isVoucherRedeemed(item.id) ? "Đã đổi" : "Đổi điểm"}
+              </button>
         </div>
       ))
     ) : (

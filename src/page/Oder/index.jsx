@@ -10,16 +10,23 @@ import AddressOD from "./AddresOD";
 function Order({}) {
   const user = useSelector((state) => state.user.user);
   const location = useLocation();
-  const { cartgoods, totalPrice, selectedVoucher } = location.state;
+  const {itemsToOrder, totalPrice, selectedVoucher } = location.state;
   const navigate = useNavigate();
-  const [goodOrder, setGoodOrder] = useState(cartgoods);
+  const [goodOrder, setGoodOrder] = useState(itemsToOrder);
+
   const [selectAddress, setSelectAddress] = useState(null);
   const [address, setAddress] = useState([]);
-  // console.log("1", typeof cartgoods);
+  // console.log("1", typeof itemsToOrder);
   // console.log("2", location.state);
   const [showAddress, setShowAddress] = useState(false);
   const access_token = getCSRFTokenFromCookie("access_token");
   const title = ["Đơn giá", "Số lượng", "Thành tiền"];
+  useEffect(() => {
+    setGoodOrder(itemsToOrder); // Gán giá trị mới cho goodOrder khi itemsToOrder thay đổi
+    console.log("this is good in cart", itemsToOrder);
+    console.log("this is good in order: ", goodOrder);
+    console.log("this is voucher for this order:" , selectedVoucher);
+  }, [itemsToOrder]);
   const HandleOnclickOrder = async () => {
     if (!selectAddress) {
       alert("Bạn chưa thiết lập địa chỉ giao hàng");
@@ -32,7 +39,8 @@ function Order({}) {
           "order/",
           {
             shipping_address: addressShip,
-            goods: cartgoods,
+            goods_id: itemsToOrder.map((item) => item.id),
+            voucherUserId:  (selectedVoucher)? selectedVoucher.id : null,
           },
           {
             headers: {
@@ -42,16 +50,15 @@ function Order({}) {
             withCredentials: true,
           }
         );
-        console.log(respone);
+        setGoodOrder([]);
+        navigate("/profile/");
       } catch (error) {
         console.log("Lỗi ", error);
       }
-      if(selectedVoucher){
-        handleVoucherUsage();
-      }
-      alert("Đơn hàng đã được đặt thành công! ");
-      setGoodOrder([]);
-      navigate("/profile");
+      // if(selectedVoucher){
+      //   handleVoucherUsage();
+      // }
+      
     }
   };
   const handleOnclickShowAddress = () => {
@@ -78,27 +85,27 @@ function Order({}) {
   const handleSelectAddress = (item) => {
     setSelectAddress(item);
   };
-  console.log("10",selectedVoucher);
-  const handleVoucherUsage = async () => {
-    if (selectedVoucher) {
-      try {
-        const response = await request1.patch(
-          `vouchers/redeemed_vouchers/${selectedVoucher.voucher.id}`, 
-          {
-            headers: {
-              Authorization: `Bearer ${access_token}`,
-              "Content-Type": "application/json",
-            },
-            withCredentials: true,
-          }
-        );
-        console.log("Voucher đã được sử dụng:", response);
-        // Sau khi sử dụng voucher thành công, bạn có thể cập nhật lại voucher ở frontend hoặc trạng thái
-      } catch (error) {
-        console.log("Lỗi khi sử dụng voucher", error);
-      }
-    }
-  }; 
+ 
+  // const handleVoucherUsage = async () => {
+  //   if (selectedVoucher) {
+  //     try {
+  //       const response = await request1.patch(
+  //         `vouchers/redeemed_vouchers/${selectedVoucher.voucher.id}`, 
+  //         {
+  //           headers: {
+  //             Authorization: `Bearer ${access_token}`,
+  //             "Content-Type": "application/json",
+  //           },
+  //           withCredentials: true,
+  //         }
+  //       );
+  //       console.log("Voucher đã được sử dụng:", response);
+  //       // Sau khi sử dụng voucher thành công, bạn có thể cập nhật lại voucher ở frontend hoặc trạng thái
+  //     } catch (error) {
+  //       console.log("Lỗi khi sử dụng voucher", error);
+  //     }
+  //   }
+  // }; 
   return user == null ? (
     <div>
       <div className="text-center text-xl font-Montserrat font-semibold my-10">

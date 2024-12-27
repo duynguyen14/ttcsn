@@ -46,7 +46,7 @@ function Login() {
         Cookies.set("access_token", response.data.access_token, { expires: 7, path: "" });
         Cookies.set("refresh_token", response.data.refresh_token, { expires: 7, path: "" });
         Cookies.set("user", JSON.stringify(response.data.user), { expires: 7, path: "" });
-        localStorage.setItem('user',JSON.stringify(response.data.user));
+        // localStorage.setItem('user',JSON.stringify(response.data.user));
         dispatch(LoginUser(response.data.user));
         navigate("/");
       }

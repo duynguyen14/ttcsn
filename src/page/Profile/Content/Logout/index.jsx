@@ -8,7 +8,7 @@ function Logout() {
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(LogoutUser());
-    // localStorage.removeItem("user");
+    localStorage.removeItem("user");
     Cookies.remove("access_token", { path: "" });
     Cookies.remove("refresh_token", { path: "" });
     Cookies.remove("user", { path: "" });

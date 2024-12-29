@@ -28,6 +28,7 @@ function ImageProduct({ id }) {
         const response = await request1.get(`goods/list/${id}/`);
         // console.log(response)
         setProduct(response.data);
+        console.log("1",response)
       } catch (e) {
         console.log("lỗi", e);
       }
@@ -55,6 +56,10 @@ function ImageProduct({ id }) {
     if (!statusUser) {
       alert("Bạn chưa đăng nhập vui lòng đăng nhập để thực hiện");
       return navigate("/login");
+    }
+    if(Product.amount<=0){
+      alert("Số lượng sản phẩm này đã hết vui lòng chọn sản phẩm khác")
+      return;
     }
     if (number === 0) {
       alert("Vui lòng chọn số lượng sản phẩm");

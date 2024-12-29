@@ -10,7 +10,7 @@ const UserList = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const usersPerPage = 10;
-  const access_token = getCSRFTokenFromCookie("access_token");
+  const access_token = getCSRFTokenFromCookie("access_token_admin");
 
   const viewUserDetails = (user) => {
     setSelectedUser(user);

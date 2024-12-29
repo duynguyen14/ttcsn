@@ -1,3 +1,4 @@
+import { PricetoString } from "../../Component/Translate_Price";
 function CartFooter({
   totalPrice,
   handleOnclickOrder,
@@ -8,9 +9,14 @@ function CartFooter({
   return (
     <div className="flex justify-between items-center p-5 bg-white shadow-md font-Montserrat">
       <div className="flex justify-center items-center">
-        <p className="text-lg font-semibold text-red-500 pr-5">
-          Tổng tiền: {totalPrice} VND
-        </p>
+        <div className="text-lg font-semibold text-red-500 pr-5">
+          {
+            totalPrice&&
+            <p>
+              Tổng tiền: {PricetoString(totalPrice)} VND
+            </p>
+          }
+        </div>
         {selectedVoucher && (
           <p className="text-primary font-semibold text-sm">
             {

@@ -4,26 +4,12 @@ import { Link } from "react-router-dom";
 import { PricetoString } from "../../../../Component/Translate_Price/index.jsx";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 
-function Ultrabook() {
+function Ultrabook({good}) {
   const [ismore, setIsmore] = useState(true);
   const [numberproduct, setNumberproduct] = useState(5);
   const [productSlice, setProductsilce] = useState([]);
-  const [good, setGood] = useState([]);
+  // const [good, setGood] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(50);
-
-  useEffect(() => {
-    const fetch = async () => {
-      try {
-        const response = await request1.get("goods/list");
-        const data = response.data;
-        setGood(data);
-      } catch (e) {
-        console.log("Có lỗi ", e);
-      }
-    };
-    fetch();
-  }, []);
-
   useEffect(() => {
     if (good && good.length > 0) {
       setProductsilce(good.slice(currentIndex, currentIndex + numberproduct));
@@ -48,7 +34,7 @@ function Ultrabook() {
       setCurrentIndex(currentIndex - numberproduct);
     }
   };
-  console.log("good", good);
+  // console.log("good", good);
   return (
     <div className="mx-3 my-3 lg:mx-16 xl:mx-32 relative border-solid">
       <h1 className="uppercase font-bold font-Montserrat text-md lg:text-xl cursor-pointer hover:text-primary">
@@ -122,13 +108,16 @@ function Ultrabook() {
           </button>
         </div>
         <div className="absolute inset-y-0 right-0 flex items-center justify-center w-10">
-          <button
-            onClick={handleNext}
-            disabled={currentIndex + numberproduct >= good.length}
-            className="text-2xl text-primary disabled:text-gray-400 hover:text-gray-600"
-          >
-            <FiChevronRight />
-          </button>
+          {
+            good&&good.length>0&&
+            <button
+              onClick={handleNext}
+              disabled={currentIndex + numberproduct >= good.length}
+              className="text-2xl text-primary disabled:text-gray-400 hover:text-gray-600"
+            >
+              <FiChevronRight />
+            </button>
+          }
         </div>
       </div>
 

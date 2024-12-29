@@ -1,14 +1,17 @@
 import React, { useEffect, useState } from "react";
 import OrderTable from "./OrderTable";
+import DetailModal from "./DetailModal";
 import { request1 } from "../../../utils/request";
 import { getCSRFTokenFromCookie } from "../../../Component/Token/getCSRFToken";
+import { useNavigate } from "react-router-dom";
 // Dữ liệu giả lập đơn hàng
 const OrderManagement = () => {
   const [orders, setOrders] = useState([]);
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [showConfirmPopup, setShowConfirmPopup] = useState(false);
-  const access_token = getCSRFTokenFromCookie("access_token");
+  const access_token = getCSRFTokenFromCookie("access_token_admin");
+  const navigate=useNavigate();
   const handleViewDetails = async(order) => {
     try {
       const response = await request1.get(`admin/orders/${order.order_id}/goods/`, {
@@ -20,6 +23,7 @@ const OrderManagement = () => {
       });
       console.log("1",response);
       // setOrders(response.data);
+      navigate("/admin/managebill/billdetail",{state:{order: response.data}})
     } catch (e) {
       console.log("Lỗi ", e);
     }
@@ -79,19 +83,7 @@ const OrderManagement = () => {
 
       {/* Modal Xem chi tiết */}
       {showDetailModal && selectedOrder && (
-        <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex justify-center items-center z-50">
-          <div className="bg-white rounded-lg p-6 w-[600px]">
-            <h3 className="text-xl font-semibold mb-4">
-              Chi tiết đơn hàng {selectedOrder.order_id}
-            </h3>
-            <button
-              onClick={handleCloseDetailModal}
-              className="bg-gray-400 text-white px-6 py-2 rounded-md hover:bg-gray-500 mt-4"
-            >
-              Đóng
-            </button>
-          </div>
-        </div>
+        <DetailModal order={selectedOrder} onClose={handleCloseDetailModal}/>
       )}
 
       {/* Popup Xác nhận */}

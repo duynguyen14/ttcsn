@@ -3,26 +3,14 @@ import { request1 } from "../../../../utils/request";
 import { Link } from "react-router-dom";
 import { PricetoString } from "../../../../Component/Translate_Price/index.jsx";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
+import { isArray } from "chart.js/helpers";
 
-function Ultrabook() {
+function Ultrabook({good}) {
   const [ismore, setIsmore] = useState(true);
   const [numberproduct, setNumberproduct] = useState(5);
   const [productSlice, setProductsilce] = useState([]);
-  const [good, setGood] = useState([]);
+  // const [good, setGood] = useState(good);
   const [currentIndex, setCurrentIndex] = useState(25);
-
-  useEffect(() => {
-    const fetch = async () => {
-      try {
-        const response = await request1.get("goods/list");
-        const data = response.data;
-        setGood(data);
-      } catch (e) {
-        console.log("Có lỗi ", e);
-      }
-    };
-    fetch();
-  }, []);
 
   useEffect(() => {
     if (good && good.length > 0) {
@@ -38,8 +26,10 @@ function Ultrabook() {
   };
 
   const handleNext = () => {
-    if (currentIndex + numberproduct < good.length) {
-      setCurrentIndex(currentIndex + numberproduct);
+    if(good&&good.length>0){
+      if (currentIndex + numberproduct < good.length) {
+        setCurrentIndex(currentIndex + numberproduct);
+      }
     }
   };
 
@@ -48,7 +38,6 @@ function Ultrabook() {
       setCurrentIndex(currentIndex - numberproduct);
     }
   };
-  console.log("good", good);
   return (
     <div className="mx-3 my-3 lg:mx-16 xl:mx-32 relative border-solid">
       <h1 className="uppercase font-bold font-Montserrat text-md lg:text-xl cursor-pointer hover:text-primary">
@@ -122,6 +111,8 @@ function Ultrabook() {
           </button>
         </div>
         <div className="absolute inset-y-0 right-0 flex items-center justify-center w-10">
+          {
+            good&&good.length>0&&
           <button
             onClick={handleNext}
             disabled={currentIndex + numberproduct >= good.length}
@@ -129,6 +120,7 @@ function Ultrabook() {
           >
             <FiChevronRight />
           </button>
+          }
         </div>
       </div>
 

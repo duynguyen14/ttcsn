@@ -104,12 +104,19 @@ function Regester() {
                 loyaltyPoints:0,
             }
             try{
-                await request1.post("user/register",newuser)
+                const response=await request1.post("user/register",newuser)
                 alert("Đăng ký tài khoản thành công");
                 navigate("/login");
             }
             catch(error){
-                console.log("Lỗi",error);
+                if(error.response.status==400){
+                    alert("Email đã được đăng ký vui lòng đăng ký email khác")
+                    return;
+                }
+                else{
+                    alert("Có lỗi xảy ra");
+                    return;
+                }
             }
         }
     }

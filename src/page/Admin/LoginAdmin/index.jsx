@@ -23,8 +23,8 @@ const LoginForm = () => {
       console.log(response.data.access_token);
       if (response.status === 200) {
         alert("Đăng nhập thành công");
-        Cookies.set("access_token", response.data.access_token, { expires: 7, path: "" });
-        Cookies.set("refresh_token", response.data.refresh_token, { expires: 7, path: "" });
+        Cookies.set("access_token_admin", response.data.access_token, { expires: 7, path: "" });
+        Cookies.set("refresh_token_admin", response.data.refresh_token, { expires: 7, path: "" });
         navigate("/admin")
       }
     }

@@ -4,12 +4,16 @@ import {PricetoString} from "../../../Component/Translate_Price/index.jsx"
 const OrderTable = ({ orders, onViewDetails, onConfirmOrder }) => {
   const getStatusColor = (status) => {
     switch (status) {
-      case "Cancelled":
-        return "text-red-500";
-      case "Processing":
+      case "Chờ xác nhận":
         return "text-green-500";
-      case "Shipped":
+      case "Đã xác nhận":
+        return "text-green-500";
+      case "Đang giao":
         return "text-blue-500";
+      case "Đã giao":
+        return "text-blue-500";
+      case "Đã hủy":
+        return "text-red-500";
       default:
         return "text-gray-500"; // Màu mặc định nếu không khớp trạng thái
     }

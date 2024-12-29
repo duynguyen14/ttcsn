@@ -26,6 +26,7 @@ import CartShopping from "./Cartshopping/cartShpping"
 import AdminHome from "./Admin/AdminHome"
 import ManagementUser from "./Admin/ManaUser"
 import ManagementBill from "./Admin/ManaBill"
+import DetailModal from "./Admin/ManaBill/DetailModal"
 import ManagementGood from "./Admin/ManaGood/indes"
 import LoginForm from "./Admin/LoginAdmin"
 const PublicPage=[
@@ -56,8 +57,9 @@ const PublicPage=[
     {path:"/admin/login", component: LoginForm, layout: null},
     {path:"/admin", component: AdminHome, layout: AdminLayout},
     {path:"/admin/manageuser", component: ManagementUser, layout: AdminLayout},
-    {path:"/admin/managebill", component: ManagementBill, layout: AdminLayout},
     {path:"/admin/managegood", component: ManagementGood, layout: AdminLayout},
+    {path:"/admin/managebill", component: ManagementBill, layout: AdminLayout},
+    {path:"/admin/managebill/billdetail", component: DetailModal, layout: AdminLayout},
     
 ]
 const PrivatePage=[

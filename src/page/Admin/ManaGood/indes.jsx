@@ -8,7 +8,7 @@ import { request1 } from "../../../utils/request";
 import { getCSRFTokenFromCookie } from "../../../Component/Token/getCSRFToken";
 const ProductList = () => {
   const [products, setProducts] = useState([]);
-  const access_token = getCSRFTokenFromCookie("access_token");
+  const access_token = getCSRFTokenFromCookie("access_token_admin");
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);

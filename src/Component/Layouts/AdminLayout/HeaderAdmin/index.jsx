@@ -6,7 +6,7 @@ import { Link, useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
 const HeaderAdmin = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const access_token = getCSRFTokenFromCookie("access_token");
+  const access_token = getCSRFTokenFromCookie("access_token_admin");
   // Hàm xử lý sự kiện click để toggle menu
   const navigate=useNavigate();
   const handleMenuClick = () => {
@@ -14,8 +14,8 @@ const HeaderAdmin = () => {
   };
   const handleLogout = () => {
     if(window.confirm("Bạn chắc chắn muốn đăng xuât")){
-      Cookies.remove("access_token", {path: "/" });
-      Cookies.remove("refresh_token",  {path: "/" });
+      Cookies.remove("access_token_admin", {path: "/admin" });
+      Cookies.remove("refresh_token_admin",  {path: "/admin" });
   
       // Điều hướng về trang đăng nhập
       navigate("/admin/login");

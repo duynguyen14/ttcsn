@@ -1,4 +1,5 @@
 // DetailModal Component
+import { request1,request } from "../../../utils/request";
 import { useNavigate, useLocation } from "react-router-dom";
 
 const DetailModal = () => {
@@ -83,7 +84,7 @@ const DetailModal = () => {
               >
                 <td className="border border-gray-300 px-4 py-2 flex flex-col items-center gap-2 justify-center">
                   <img
-                    src={`http://127.0.0.1:8888${product.image}`}
+                    src={`${request}${product.image}`}
                     alt={product.goodName}
                     className="w-[200px] h-[200px] object-cover rounded-md"
                   />

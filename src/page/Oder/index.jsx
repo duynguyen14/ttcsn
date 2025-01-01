@@ -4,17 +4,41 @@ import { useEffect, useState } from "react";
 import { PricetoString } from "../../Component/Translate_Price";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import { request1 } from "../../utils/request";
+import { request1,request } from "../../utils/request";
 import { getCSRFTokenFromCookie } from "../../Component/Token/getCSRFToken";
 import AddressOD from "./AddresOD";
+import PaymentFrom from "./PaymentFrom";
+import PaymentReturn from "./PaymentReturn";
+
 function Order({}) {
   const user = useSelector((state) => state.user.user);
   const location = useLocation();
-  const {itemsToOrder, totalPrice, selectedVoucher } = location.state;
   const navigate = useNavigate();
+
+  const orderData = JSON.parse(localStorage.getItem("orderData"));
+  const {itemsToOrder, totalPrice, selectedVoucher } = orderData;
+
+  const [showPaymentReturn, setShowPaymentReturn] = useState(false)
+
+  useEffect(() => {
+    const queryParams = new URLSearchParams(location.search); // Lấy query string
+    const hasQuery = location.search !== ""; // Kiểm tra xem có query string hay không
+    setShowPaymentReturn(hasQuery); // Cập nhật state
+  }, [location.search]);
+
   const [goodOrder, setGoodOrder] = useState(itemsToOrder);
 
-  const [selectAddress, setSelectAddress] = useState(null);
+
+  const [selectAddress, setSelectAddress] = useState(() => {
+    // Lấy giá trị từ localStorage, mặc định là null nếu không có
+    const storedAddress = localStorage.getItem("selectAddress");
+    return storedAddress ? JSON.parse(storedAddress) : null;
+  });
+  // Lưu giá trị vào localStorage khi selectAddress thay đổi
+  useEffect(() => {
+    localStorage.setItem("selectAddress", JSON.stringify(selectAddress));
+  }, [selectAddress]);
+  
   const [address, setAddress] = useState([]);
   // console.log("1", typeof itemsToOrder);
   // console.log("2", location.state);
@@ -23,47 +47,12 @@ function Order({}) {
   const title = ["Đơn giá", "Số lượng", "Thành tiền"];
   useEffect(() => {
     setGoodOrder(itemsToOrder); // Gán giá trị mới cho goodOrder khi itemsToOrder thay đổi
-    console.log("this is good in cart", itemsToOrder);
-    console.log("this is good in order: ", goodOrder);
-    console.log("this is voucher for this order:" , selectedVoucher);
   }, [itemsToOrder]);
-  const HandleOnclickOrder = async () => {
-    if (!selectAddress) {
-      alert("Bạn chưa thiết lập địa chỉ giao hàng");
-      return;
-    }
-    if (window.confirm("Bạn xác nhận đặt đơn hàng này")) {
-      const addressShip = `${selectAddress.name}.${selectAddress.phone}.${selectAddress.city}.${selectAddress.addressct}`;
-      try {
-        const respone = await request1.post(
-          "order/",
-          {
-            shipping_address: addressShip,
-            goods_id: itemsToOrder.map((item) => item.id),
-            voucherUserId:  (selectedVoucher)? selectedVoucher.id : null,
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${access_token}`,
-              "Content-Type": "application/json",
-            },
-            withCredentials: true,
-          }
-        );
-        setGoodOrder([]);
-        navigate("/profile/");
-      } catch (error) {
-        console.log("Lỗi ", error);
-      }
-      // if(selectedVoucher){
-      //   handleVoucherUsage();
-      // }
-      
-    }
-  };
+
   const handleOnclickShowAddress = () => {
     setShowAddress(true);
   };
+
   useEffect(() => {
     const fetch = async () => {
       try {
@@ -82,30 +71,91 @@ function Order({}) {
     };
     fetch();
   }, []);
+
+
+  // Hàm fetch dữ liệu thanh toán
+  const fetchPaymentData = async () => {
+    const queryString = location.search;
+    const isPaymentDataFetched = localStorage.getItem("isPaymentDataFetched");
+
+    if (!isPaymentDataFetched) {
+      try {
+        const response = await request1.get(`vn/payment_return/${queryString}`, {
+          headers: {
+            Authorization: `Bearer ${access_token}`,
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
+        });
+
+        if (response.data?.status === "success") {
+          localStorage.setItem("message", JSON.stringify(response.data.message));
+          localStorage.setItem("payment", JSON.stringify(response.data.data));
+          HandleOnclickOrder();
+          // Đánh dấu là đã fetch dữ liệu
+          localStorage.setItem("isPaymentDataFetched", true);
+        } else {
+          setError(response.data?.message || "Lỗi không xác định");
+        }
+      } catch (err) {
+        console.error("Lỗi khi gọi API:", err.response || err);
+        setError("Không thể kết nối tới server");
+      }
+    }
+  };
+
+  useEffect(() => {
+    const queryParams = new URLSearchParams(location.search);
+    const hasQuery = queryParams.toString() !== ""; // Check nếu có query string
+    if (hasQuery) {
+      setShowPaymentReturn(true);
+      fetchPaymentData(); // Chỉ gọi hàm nếu có query
+    }
+  }, [location.search]); // Phụ thuộc vào `location.search`
+  
+  
+  const HandleOnclickOrder = async () => {
+    const Address = JSON.parse(localStorage.getItem("selectAddress"));
+    const orderData = JSON.parse(localStorage.getItem("orderData"));
+    const payment = JSON.parse(localStorage.getItem("payment"));
+  
+    if (!Address || !orderData || !payment) {
+      console.error("Thiếu dữ liệu cần thiết");
+      return;
+    }
+  
+    const addressShip = `${Address.name}.${Address.phone}.${Address.city}.${Address.addressct}`;
+    const Voucher = orderData?.selectedVoucher;
+  
+    try {
+      const response = await request1.post(
+        "order/",
+        {
+          order_id: payment.order_id,
+          shipping_address: addressShip,
+          goods_id: orderData.itemsToOrder.map((item) => item.id),
+          voucherUserId: Voucher ? Voucher.id : null,
+          pay_id: payment.id,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${access_token}`,
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
+        }
+      );
+    } catch (error) {
+      console.error("Lỗi khi tạo đơn hàng:", error.response || error);
+      setError("Không thể tạo đơn hàng. Vui lòng thử lại.");
+    }
+  };
+  
+
   const handleSelectAddress = (item) => {
     setSelectAddress(item);
   };
  
-  // const handleVoucherUsage = async () => {
-  //   if (selectedVoucher) {
-  //     try {
-  //       const response = await request1.patch(
-  //         `vouchers/redeemed_vouchers/${selectedVoucher.voucher.id}`, 
-  //         {
-  //           headers: {
-  //             Authorization: `Bearer ${access_token}`,
-  //             "Content-Type": "application/json",
-  //           },
-  //           withCredentials: true,
-  //         }
-  //       );
-  //       console.log("Voucher đã được sử dụng:", response);
-  //       // Sau khi sử dụng voucher thành công, bạn có thể cập nhật lại voucher ở frontend hoặc trạng thái
-  //     } catch (error) {
-  //       console.log("Lỗi khi sử dụng voucher", error);
-  //     }
-  //   }
-  // }; 
   return user == null ? (
     <div>
       <div className="text-center text-xl font-Montserrat font-semibold my-10">
@@ -183,7 +233,7 @@ function Order({}) {
                   <div className="flex basis-[40%] md:basis-[60%] pl-5">
                     <div className="flex items-center">
                       <img
-                        src={`http://127.0.0.1:8888${good.image}`}
+                        src={`${request}${good.image}`}
                         alt=""
                         className=" w-[50px] h-[50px] lg:w-[150px] lg:h-[150px]"
                       />
@@ -231,14 +281,14 @@ function Order({}) {
             </div>
           </div>
         </div>
-        <div className="test flex justify-end mr-5 py-10">
+        {/* <div className="test flex justify-end mr-5 py-10">
           <button
             className="button-primary bg-red-500 px-5 py-3 text-base font-bold hover:bg-red-400"
             onClick={() => HandleOnclickOrder()}
           >
             Đặt hàng
           </button>
-        </div>
+        </div> */}
         <div>
           {showAddress && (
             <AddressOD
@@ -250,6 +300,20 @@ function Order({}) {
             />
           )}
         </div>
+        <div>
+          {(
+            <PaymentFrom
+              totalPrice = {totalPrice}
+              access_token={access_token}
+            />
+          )}
+        </div>
+        {showPaymentReturn && 
+          (
+            <PaymentReturn
+                setShowPaymentReturn={setShowPaymentReturn}
+            />
+          )}
       </div>
     )
   );

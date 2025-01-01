@@ -1,4 +1,5 @@
 import React from "react";
+import { request1,request } from "../../../utils/request";
 
 const ProductDetailModal = ({ product, closeModal }) => {
   return (
@@ -8,7 +9,7 @@ const ProductDetailModal = ({ product, closeModal }) => {
         
         <div className="space-y-4">
           <div>
-            <img src={`http://localhost:8888${product.image}`} alt={product.name} className="w-full h-[350px] object-cover mb-4 rounded-md" />
+            <img src={`${request}${product.image}`} alt={product.name} className="w-full h-[350px] object-cover mb-4 rounded-md" />
           </div>
           <div>
             <p><strong>Tên sản phẩm:</strong> {product.goodName}</p>

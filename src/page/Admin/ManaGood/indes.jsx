@@ -4,7 +4,7 @@ import Image from "../../../assets/images/Product_1.png";
 import ProductDetailModal from "./ProductDetailModal ";
 import ProductEditModal from "./ProductEditModal ";
 import AddProductModal from "./AddProductModal";
-import { request1 } from "../../../utils/request";
+import { request1,request } from "../../../utils/request";
 import { getCSRFTokenFromCookie } from "../../../Component/Token/getCSRFToken";
 const ProductList = () => {
   const [products, setProducts] = useState([]);
@@ -138,7 +138,7 @@ const ProductList = () => {
               >
                 <td className="px-6 py-4">
                   <img
-                    src={`http://localhost:8888${product.image}`}
+                    src={`${request}${product.image}`}
                     alt={product.name}
                     className="w-20 h-20 object-cover rounded-md"
                   />

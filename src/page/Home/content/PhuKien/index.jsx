@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { request1 } from "../../../../utils/request";
+import { request1,request } from "../../../../utils/request";
 import { Link } from "react-router-dom";
 import { PricetoString } from "../../../../Component/Translate_Price/index.jsx";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
@@ -61,7 +61,7 @@ function Ultrabook({good}) {
                     {/* Image */}
                     <div className="max-w- overflow-hidden">
                       <img
-                        src={Product.image}
+                        src={`${request}${Product.image}`}
                         className="max-w-full hover:scale-110 transition-all ease-in-out duration-500 block"
                       />
                     </div>

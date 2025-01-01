@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { request1 } from "../../utils/request";
+import { request1,request } from "../../utils/request";
 import { getCSRFTokenFromCookie } from "../../Component/Token/getCSRFToken";
 import { FaArrowLeft } from "react-icons/fa";
 import { Link } from "react-router-dom";
@@ -49,13 +49,26 @@ function BuildDetail() {
             withCredentials: true,
           }
         );
-        alert("Đơn hàng đã được hủy thành công.");
-        // Cập nhật lại trạng thái đơn hàng
+        
+        // Check if the response is successful (status 200)
+      if (response.status === 200) {
+        // Display success message from the backend
+        const successMessage = response.data.success || "Đơn hàng đã được hủy thành công.";
+        alert(successMessage);
+
+        // Update order status locally in the state
         setBuild((prevBuild) => ({
           ...prevBuild,
-          shipping_status: "Đã hủy",
+          shipping_status: "Đã hủy", // Update the status to "Cancelled"
         }));
-        navigate("/profile");
+
+        // Navigate to profile page
+        // navigate("/profile");
+      } else {
+        // Handle other responses (if any)
+        const errorMessage = response.data.error || "Có lỗi xảy ra. Vui lòng thử lại.";
+        alert(errorMessage);
+      }
       } catch (error) {
         console.error("Lỗi khi hủy đơn hàng:", error);
         alert("Không thể hủy đơn hàng. Vui lòng thử lại sau.");
@@ -114,7 +127,7 @@ function BuildDetail() {
             {build.shipping_status === "Cancelled"&& (
               <p className="text-[10px] md:text-base">
                 <span className="text-red-500 font-semibold">
-                  {build.purchase_date}
+                  {build.updated_order_time}
                 </span>
                 : Đơn hàng đã được hủy
               </p>
@@ -134,7 +147,7 @@ function BuildDetail() {
                     <div className="flex justify-around items-center">
                       <div>
                         <img
-                          src={`http://127.0.0.1:8888${item.image}`}
+                          src={`${request}${item.image}`}
                           alt=""
                           className="w-[100px] h-[100px] md:w-[200px] md:h-[200px]"
                         />

@@ -1,25 +1,32 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { request1 } from "../../utils/request";
 import CartItem from "./cartItems";
 import VoucherModal from "./VoucherModels";
 import CartFooter from "./CartFooter";
 import { getCSRFTokenFromCookie } from "../../Component/Token/getCSRFToken";
+
+
 // import CartFooter from "./cartFooter";
 function CartShopping() {
+  const location = useLocation();
   const [cartgoods, setCartgoods] = useState([]);
   const [showVoucher, setShowVoucher] = useState(false);
   const [voucher,setVoucher]=useState([]);
   const [selectedVoucher, setSelectedVoucher] = useState(null);
 
   const [selectedItems, setSelectedItems] = useState([]);
+ 
 
   const [totalPrice, setTotalPrice] = useState(0);
   const navigate = useNavigate();
 //   const access_token = document.cookie.split("=")[1]; // Lấy token
   const user = useSelector((state) => state.user.user);
   const access_token = getCSRFTokenFromCookie("access_token");
+
+
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -34,7 +41,7 @@ function CartShopping() {
       } catch (error) {
         console.error("Lỗi khi lấy giỏ hàng:", error);
       }
-    };
+    };-
     fetchData();
   }, []);
 
@@ -61,7 +68,18 @@ function CartShopping() {
         // console.log("Kiểu dữ liệu của cartgoods:", Array.isArray(cartgoods)); // Kiểm tra nếu cartgoods là mảng
         // console.log("cartgoods:", cartgoods); // Kiểm tra nội dung cartgoods
 
-        navigate("/order", { state: { itemsToOrder, totalPrice, selectedVoucher } });
+        localStorage.setItem(
+          "orderData",
+          JSON.stringify({
+            itemsToOrder,
+            totalPrice,
+            selectedVoucher,
+          })
+        );
+        
+        
+        navigate("/order");
+        
       }
     }
     else {
@@ -157,6 +175,7 @@ function CartShopping() {
           {showVoucher && (
             <VoucherModal showVoucher={handleOnclinkShowVoucher} setShowVoucher={setShowVoucher} voucher={voucher} onSelectVoucher={handleSelectVoucher} totalPrice ={totalPrice}/>
           )}
+
         </>
       )
     :

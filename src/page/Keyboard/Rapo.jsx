@@ -1,11 +1,8 @@
 import React, { useState, useEffect } from "react";
 import "../../page/Laptop/index.css";
 import { Link } from "react-router-dom";
-import Image from "../../assets/images/introduction.jpg";
-import Image1 from "../../assets/images/introduction1.jpg";
-import Image2 from "../../assets/images/introduction2.jpg";
-import Image3 from "../../assets/images/introduction3.jpg";
-import { request1 } from "../../utils/request";
+
+import { request1,request } from "../../utils/request";
 import { PricetoString } from "../../Component/Translate_Price";
 function Rapoo() {
   const [products, setProducts] = useState([]);
@@ -57,7 +54,7 @@ function Rapoo() {
                   <div className="group block overflow-hidden  rounded-xl cursor-pointer relative font-Montserrat hover:scale-110 transition-all ease-in-out duration-500 py-16 shadow-lg">
                     <div className="max-w overflow-hidden">
                       <img
-                        src={`http://127.0.0.1:8888/${Product.image}`}
+                        src={`${request}${Product.image}`}
                         className="max-w-full block"
                       />
                     </div>

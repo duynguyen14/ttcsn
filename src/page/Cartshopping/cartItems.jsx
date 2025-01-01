@@ -1,6 +1,6 @@
 import { HiPlusSm } from "react-icons/hi";
 import { RiSubtractFill } from "react-icons/ri";
-import { request1 } from "../../utils/request";
+import { request1,request } from "../../utils/request";
 import { PricetoString } from "../../Component/Translate_Price";
 function CartItem({
   item,
@@ -95,7 +95,7 @@ function CartItem({
       <div className="flex basis-[40%] lg:basis-[50%] px-1 lg:pl-5">
         <div className="flex items-center">
           <img
-            src={`http://127.0.0.1:8888${item.good.image}`}
+            src={`${request}${item.good.image}`}
             alt=""
             className=" w-[50px] h-[50px] lg:w-[150px] lg:h-[150px]"
           />

@@ -75,7 +75,7 @@ function Ultrabook() {
                     {/* Image */}
                     <div className="max-w- overflow-hidden">
                       <img
-                        src={Product.image}
+                        src={`http://127.0.0.1:8888${Product.image}`}
                         className="max-w-full hover:scale-110 transition-all ease-in-out duration-500 block"
                       />
                     </div>

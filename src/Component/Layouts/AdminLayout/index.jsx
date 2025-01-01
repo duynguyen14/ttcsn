@@ -5,7 +5,7 @@ import Sidebar1 from "./Navbar2";
 function AdminLayout({ children }) {
   return (
     <div className="flex ">
-      <div className="basis-[20%]">
+      <div className="basis-[20%] h-full">
         <Sidebar1 />
       </div>
       <div className="h-screen font-Montserrat basis-[80%]">

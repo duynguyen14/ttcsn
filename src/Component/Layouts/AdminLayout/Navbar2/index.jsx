@@ -33,7 +33,7 @@ const Sidebar1 = () => {
   };
 
   return (
-    <div className="bg-white h-screen shadow-lg font-Montserrat rounded-lg overflow-hidden">
+    <div className="bg-white shadow-lg font-Montserrat rounded-lg overflow-hidden h-screen">
       {/* Logo */}
       <div className="p-6 border-b">
         <Link to={"/admin"}>

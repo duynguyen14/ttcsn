@@ -111,7 +111,7 @@ function BuildDetail() {
               </span>
               : Đơn hàng đã được đặt
             </p>
-            {build.shipping_status === "Cancelled"&& (
+            {build.shipping_status === "Đã hủy"&& (
               <p className="text-[10px] md:text-base">
                 <span className="text-red-500 font-semibold">
                   {build.purchase_date}
@@ -168,7 +168,7 @@ function BuildDetail() {
         </div>
         <div className="flex justify-end mx-3 md:mx-5 text-[10px] md:text-base">
         {
-            build.shipping_status!=="Cancelled"&&
+            build.shipping_status!=="Đã hủy"&&
           <button
             className="button-primary bg-red-500 px-3 py-2 md:px-5 md:py-3 font-semibold"
             onClick={() => handleOnclickCancel()}

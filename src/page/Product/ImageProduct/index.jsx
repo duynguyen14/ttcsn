@@ -104,7 +104,11 @@ function ImageProduct({ id }) {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-7 px-2 py-3 border-t-2 border-solid border-gray-100 rounded-md">
         <div className="group relative overflow-hidden cursor-pointer border-2 border-solid border-gray-50 rounded-md">
           <img
+<<<<<<< HEAD
             src={`${request}${Product.image}`}
+=======
+            src={`http://127.0.0.1:8888${Product.image}`}
+>>>>>>> 964fb826325e7509a69e32e51d685a4bafc19922
             alt=""
             className="w-[100%] group-hover:scale-110 transition-all duration-500 ease-in-out"
           />

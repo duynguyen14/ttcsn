@@ -14,8 +14,8 @@ const HeaderAdmin = () => {
   };
   const handleLogout = () => {
     if(window.confirm("Bạn chắc chắn muốn đăng xuât")){
-      Cookies.remove("access_token_admin", {path: "/admin" });
-      Cookies.remove("refresh_token_admin",  {path: "/admin" });
+      Cookies.remove("access_token_admin", {path: "/" });
+      Cookies.remove("refresh_token_admin",  {path: "/" });
   
       // Điều hướng về trang đăng nhập
       navigate("/admin/login");

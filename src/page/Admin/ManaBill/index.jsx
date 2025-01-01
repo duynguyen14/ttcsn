@@ -32,6 +32,7 @@ const OrderManagement = () => {
   const handleConfirmOrder = (order) => {
     setSelectedOrder(order);
     setShowConfirmPopup(true);
+
   };
 
   const handleCloseDetailModal = () => {
@@ -42,15 +43,49 @@ const OrderManagement = () => {
     setShowConfirmPopup(false);
   };
 
-  const handleConfirm = () => {
-    // Cập nhật trạng thái đơn hàng khi xác nhận
-    const updatedOrders = orders.map((order) =>
-      order.id === selectedOrder.id
-        ? { ...order, status: "Đã xác nhận" }
-        : order
-    );
-    setOrders(updatedOrders);
-    setShowConfirmPopup(false);
+  const handleConfirm = async() => {
+    let newStatus;
+    switch (selectedOrder.shipping_status) {
+      case "Chờ xác nhận":
+        newStatus = "Đã xác nhận";
+        break;
+      case "Đã xác nhận":
+        newStatus = "Đang giao";
+        break;
+      case "Đang giao":
+        newStatus = "Đã giao";
+        break;
+      default:
+        newStatus = selectedOrder.shipping_status;
+    }
+    try{
+      const response=await request1.patch(`admin/orders/${selectedOrder.order_id}/`,
+        {
+          shipping_status: newStatus,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${access_token}`,
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
+        }
+      )
+      // console.log(response)
+      // Cập nhật lại trạng thái của đơn hàng
+      const updatedOrders = orders.map((o) =>
+        o.order_id === selectedOrder.order_id
+          ? { ...o, shipping_status: newStatus }
+          : o
+      );
+      setOrders(updatedOrders);
+      // setOrders(updatedOrders);
+      setShowConfirmPopup(false);
+    }
+    catch(e){
+      alert("Có lỗi khi cập nhật đơn hàng")
+      console.log("Lỗi ",e)
+    }
   };
   useEffect(() => {
     const fetch = async () => {
@@ -91,9 +126,12 @@ const OrderManagement = () => {
         <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex justify-center items-center z-50">
           <div className="bg-white rounded-lg p-6 w-[400px]">
             <h3 className="text-lg font-semibold mb-4">
-              Xác nhận đơn hàng {selectedOrder.orderNumber}
+              Cập nhật đơn hàng 
+              <span className="text-primary font-semibold">
+              &nbsp;#{selectedOrder.order_id}
+              </span>
             </h3>
-            <p>Bạn có chắc chắn muốn xác nhận đơn hàng này không?</p>
+            <p>Bạn có chắc chắn cập nhật trạng thái đơn hàng này không?</p>
             <div className="flex justify-between mt-4">
               <button
                 onClick={handleCloseConfirmPopup}

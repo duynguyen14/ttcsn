@@ -12,7 +12,7 @@ const ProductEditModal = ({ product, closeModal, saveProductChanges }) => {
     specifications: product.specifications || "", // Thêm specifications vào formData
     imageFile: null,
   });
-  const access_token = getCSRFTokenFromCookie("access_token");
+  const access_token = getCSRFTokenFromCookie("access_token_admin");
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({ ...prevData, [name]: value }));
@@ -55,8 +55,19 @@ const ProductEditModal = ({ product, closeModal, saveProductChanges }) => {
     { id: 6, name: "Asus" },
   ];
   const handeOnclickSave = async () => {
+    const formDataToSend = new FormData();
+    formDataToSend.append("goodName", formData.goodName);
+    formDataToSend.append("amount", formData.amount);
+    formDataToSend.append("price", formData.price);
+    formDataToSend.append("brand", formData.brand);
+    formDataToSend.append("category", formData.category);
+    formDataToSend.append("specifications", formData.specifications);
+
+    if (formData.imageFile) {
+      formDataToSend.append("image", formData.imageFile); // Add the file here
+    }
     try {
-      const response = await request1.put(`admin/goods/${product.id}`, formData, {
+      const response = await request1.put(`admin/goods/${product.id}/`, formDataToSend, {
         headers: {
           Authorization: `Bearer ${access_token}`, // Đảm bảo token đúng
           "Content-Type": "multipart/form-data",

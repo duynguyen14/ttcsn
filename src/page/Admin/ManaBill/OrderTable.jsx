@@ -1,5 +1,5 @@
 import React from "react";
-import {PricetoString} from "../../../Component/Translate_Price/index.jsx"
+import { PricetoString } from "../../../Component/Translate_Price/index.jsx";
 // Component xử lý bảng đơn hàng
 const OrderTable = ({ orders, onViewDetails, onConfirmOrder }) => {
   const getStatusColor = (status) => {
@@ -33,14 +33,20 @@ const OrderTable = ({ orders, onViewDetails, onConfirmOrder }) => {
       <tbody>
         {orders.map((order, index) => (
           <tr key={index}>
-            <td className="border px-4 py-2 text-primary font-semibold">#{order.order_id}</td>
-            {
-              order.total_amount&&
-            <td className="border px-4 py-2 text-red-500 font-semibold">{PricetoString(order.total_amount)
-            } VND</td>
-            }
+            <td className="border px-4 py-2 text-primary font-semibold">
+              #{order.order_id}
+            </td>
+            {order.total_amount && (
+              <td className="border px-4 py-2 text-red-500 font-semibold">
+                {PricetoString(order.total_amount)} VND
+              </td>
+            )}
             <td className="border px-4 py-2">{order.purchase_date}</td>
-            <td className={`border px-4 py-2 ${getStatusColor(order.shipping_status)} font-semibold`}>
+            <td
+              className={`border px-4 py-2 ${getStatusColor(
+                order.shipping_status
+              )} font-semibold`}
+            >
               {order.shipping_status}
             </td>
             <td className="border px-4 py-2">
@@ -50,12 +56,14 @@ const OrderTable = ({ orders, onViewDetails, onConfirmOrder }) => {
               >
                 Xem chi tiết
               </button>
-              {order.status !== "Đã xác nhận" && (
+              {(order.shipping_status === "Chờ xác nhận" ||
+                order.shipping_status === "Đã xác nhận" ||
+                order.shipping_status === "Đang giao") && (
                 <button
                   onClick={() => onConfirmOrder(order)}
                   className="bg-green-500 text-white px-4 py-2 rounded-md"
                 >
-                  Xác nhận
+                  Cập nhật
                 </button>
               )}
             </td>
